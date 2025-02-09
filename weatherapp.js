@@ -116,6 +116,10 @@ function drawDailyValues(day,low,high) {
 }
 
 function drawHourlyValues(x) {
+    // Clear tables from any previous readout
+    document.getElementById('todayTableBody').innerHTML = ''
+    document.getElementById('tomorrowTableBody').innerHTML = ''
+    document.getElementById('day3TableBody').innerHTML = ''
 
     const epochSeconds = Math.floor(Date.now() / 1000);
 
