@@ -1,6 +1,58 @@
 // ESTABLISH GLOBAL VARIABLES
 var apiData;
 
+// USE BROWSER GEOCODER TO GET ZIP
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(fetchZipCode, showError);
+    } else {
+        console.log("Geolocation is not supported by this browser.");
+    }
+}
+
+// Function to handle successful location retrieval
+function fetchZipCode(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    // OpenCage Geocoding API endpoint (Replace YOUR_API_KEY with your key)
+    const apiKey = '6e21ba74db3a4838a528707bd39bc7a4'; 
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Get the zip code from the response
+            const zipCode = data.results[0]?.components?.postcode || "Zip code not found";
+            console.log(`Your zip code is: ${zipCode}`);
+            fetchWeatherData(zipCode)
+        })
+        .catch(error => {
+            console.log("Error fetching zip code.");
+        });
+}
+
+// Function to handle error in getting location
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            console.log("User denied the request for Geolocation.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            console.log("The request to get user location timed out.");
+            break;
+        case error.UNKNOWN_ERROR:
+            console.log("An unknown error occurred.");
+            break;
+    }
+}
+
+// Get the location when the page loads
+getLocation();
+
 // EVENT LISTENER ON ZIP SUBMISSION FORM
 document.addEventListener("DOMContentLoaded", function () {
     const input = document.querySelector(".form-control");
