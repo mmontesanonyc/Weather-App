@@ -223,7 +223,7 @@ function formatHourFromEpoch(epoch) {
 
     const date = new Date(epoch);
     let hours = date.getHours();
-    const suffix = hours >= 12 ? ' PM' : ' AM';
+    const suffix = hours >= 12 ? 'pm' : 'am';
 
     // Convert 24-hour time to 12-hour format
     hours = hours % 12 || 12;
