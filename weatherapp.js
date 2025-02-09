@@ -113,12 +113,12 @@ function printTodaySummary(x) {
     document.getElementById('iconPrint2').src = x.current.condition.icon
 
     // Change of precip
-    document.getElementById('rainChancePrint').innerText = x.forecast.forecastday[0].day.daily_chance_of_rain
-    document.getElementById('snowChancePrint').innerText = x.forecast.forecastday[0].day.daily_chance_of_snow
+    document.getElementById('rainChancePrint').innerText = x.forecast.forecastday[0].day.daily_chance_of_rain + '%'
+    document.getElementById('snowChancePrint').innerText = x.forecast.forecastday[0].day.daily_chance_of_snow + '%'
 
     // Low, High
-    document.getElementById('lowPrint').innerText = x.forecast.forecastday[0].day.mintemp_f
-    document.getElementById('highPrint').innerText = x.forecast.forecastday[0].day.maxtemp_f
+    // document.getElementById('lowPrint').innerText = x.forecast.forecastday[0].day.mintemp_f
+    // document.getElementById('highPrint').innerText = x.forecast.forecastday[0].day.maxtemp_f
 
     // PRINT TODAY'S DROPDOWN HEADER - TEMP RANGE
 
