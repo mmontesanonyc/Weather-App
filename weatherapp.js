@@ -47,7 +47,7 @@ function fetchWeatherData(x) {
 function printTodaySummary(x) {
     // Show results containers
     document.querySelectorAll(".resultsContainer").forEach(element => {
-        element.classList.add("show");
+        element.classList.remove("resultsContainer");
     });
 
     document.getElementById('cityPrint').innerText = x.location.name

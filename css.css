@@ -163,7 +163,10 @@ thead {
   padding: 0px 10px;
   border-top-right-radius: 10px;   /* Top right corner */
   border-bottom-right-radius: 10px; /* Bottom right corner */
+}
 
+.resultsContainer {
+  display: none;
 }
 
 
