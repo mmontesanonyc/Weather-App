@@ -219,7 +219,7 @@ function drawHourlyValues(x) {
                     cell3.classList.add('border-left')
 
                 let tempDiv = document.createElement('div')
-                    tempDiv.innerHTML = temp
+                    tempDiv.innerHTML = parseInt(temp)
                     tempDiv.classList.add('tempfill')
                 cell3.appendChild(tempDiv)
 
@@ -243,8 +243,6 @@ function drawHourlyValues(x) {
                 
             } else {}
         }
-
-        console.log('daily min/max:', dailyMin,dailyMax)
 
         // get all things in day+TableBody that have a classlist tempFill
         var tableID = '#' + day + 'TableBody'
