@@ -108,3 +108,65 @@ hr {
   font-size: 18px;
   font-weight: bold;
 }
+
+.fs-lg {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.fs-sm {
+  font-size: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+}
+
+
+.oval {
+  width: 100%;  /* Adjust as needed */
+  height: 35px;  /* Controls the oval shape */
+  background-color: lightgray;
+  border-radius: 25px; /* Half of height makes it oval */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.left {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.right {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.condition {
+  font-size: 12px;
+}
+
+thead {
+  border-bottom: 1px solid lightgray;
+}
+
+.tempfill {
+  background-color: rgb(247, 237, 237);
+  border-bottom: 1px solid white;
+  text-align: right;
+  font-weight: bold;
+  padding: 0px 10px;
+  border-top-right-radius: 10px;   /* Top right corner */
+  border-bottom-right-radius: 10px; /* Bottom right corner */
+
+}
+
+
+
+
+
