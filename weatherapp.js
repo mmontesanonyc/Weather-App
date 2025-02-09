@@ -211,8 +211,11 @@ function drawHourlyValues(x) {
                     cell0.innerHTML = hour
                     cell0.classList.add('font-weight-bold')
                     cell0.classList.add('border-right')
+                    cell0.classList.add('align-right')
+                    cell0.classList.add('pr-1')
                 let cell1 = document.createElement('td')
                     cell1.innerHTML = cloudPct + '%'
+                    cell1.classList.add('pl-1')
                 let cell2 = document.createElement('td')
                     cell2.innerHTML = precipChance + '%'
                 let cell3 = document.createElement('td')
