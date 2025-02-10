@@ -25,7 +25,9 @@ function fetchZipCode(position) {
             // Get the zip code from the response
             const zipCode = data.results[0]?.components?.postcode || "Zip code not found";
             console.log(`Your zip code is: ${zipCode}`);
-            fetchWeatherData(zipCode)
+            
+            fetchWeatherData(zipCode) // ADD IN FOR PUBLISHING
+            // printStaticData(apiReturn)
         })
         .catch(error => {
             console.log("Error fetching zip code.");
@@ -82,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
 // INITIALIZE API FETCH
 function fetchWeatherData(x) {
     api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + '&days=3&aqi=yes&alerts=no'
-
     fetch (api)
         .then(response => {return response.json()})
         .then(data => {
@@ -93,6 +94,13 @@ function fetchWeatherData(x) {
         printRangeHeaders(apiData)
         drawHourlyValues(apiData)
     })
+}
+
+function printStaticData(x) {
+    console.log('***Loading static data:')
+    printTodaySummary(x)
+    printRangeHeaders(x)
+    drawHourlyValues(x)
 }
 
 
@@ -161,6 +169,11 @@ function printRangeHeaders(x) {
     drawDailyValues('tomorrow',tomorrowLow,tomorrowHigh)
     drawDailyValues('day3',day3Low,day3High)
 
+    // PRINT DAILY ICONS
+    document.getElementById('todayIcon').src = x.forecast.forecastday[0].day.condition.icon
+    document.getElementById('tomorrowIcon').src = x.forecast.forecastday[1].day.condition.icon
+    document.getElementById('day3Icon').src = x.forecast.forecastday[2].day.condition.icon
+
 }
 
 function drawDailyValues(day,low,high) {
@@ -177,6 +190,9 @@ function drawHourlyValues(x) {
     document.getElementById('day3TableBody').innerHTML = ''
 
     const epochSeconds = Math.floor(Date.now() / 1000);
+
+    var threeDayMin = -Infinity
+    var threeDayMax = Infinity
 
     // loop through forecast days 0-2
     for (let i = 0; i < x.forecast.forecastday.length; i ++) {    
@@ -225,15 +241,22 @@ function drawHourlyValues(x) {
                     cell2.innerHTML = precipChance + '%'
                     cell2.classList.add('precipitation')
                     cell2.style.opacity = precipChance/100 < .2 ? .2 : precipChance/100
+
                 let cell3 = document.createElement('td')
                     cell3.classList.add('border-left')
 
+                    let tempcell = document.createElement('div')
+                    tempcell.classList.add('tempcell')
+                    let temprect = document.createElement('div')
+                    temprect.classList.add('rectangle')
+                    tempcell.appendChild(temprect)
 
-                let tempDiv = document.createElement('div')
-                    var temp2 = parseInt(temp)
-                    tempDiv.innerHTML = `<span class="text-offset">${temp2}</span>`
-                    tempDiv.classList.add('tempfill')
-                cell3.appendChild(tempDiv)
+                    let tempdot = document.createElement('div')
+                        tempdot.classList.add('circle')
+                        tempdot.innerHTML = temp.toFixed(1)
+                        tempcell.appendChild(tempdot)
+
+                cell3.appendChild(tempcell)
 
                 // Manage temperature styling
 
@@ -243,6 +266,13 @@ function drawHourlyValues(x) {
                 }
                 if (temp < dailyMin) {
                     dailyMin = temp;  // Update min if the new value is lower
+                }
+
+                if (temp > threeDayMax) {
+                    threeDayMax = temp;  // Update max if the new value is higher
+                }
+                if (temp < threeDayMin) {
+                    threeDayMin = temp;  // Update min if the new value is lower
                 }
 
                 // Dump it all into the table
@@ -256,26 +286,26 @@ function drawHourlyValues(x) {
             } else {}
         }
 
-        var dailyRange = dailyMax - dailyMin
-        console.log(day, dailyRange)
+        // Setting different visual ranges for cold, moderate, and hot weather
+        dailyRange = (dailyMax - dailyMin)
+        var threeDayRange = threeDayMax - threeDayMin
 
-        // get all things in day+TableBody that have a classlist tempFill
+
+        // Select all temperature cells
         var tableID = '#' + day + 'TableBody'
-        const tempfillElements = document.querySelectorAll(`${tableID} .tempfill`);
+        const tempCells = document.querySelectorAll(`${tableID} .tempcell`);
 
-        tempfillElements.forEach(element => {
-            var temp = parseFloat(element.innerText);
-            var mr = (100 - ((temp - dailyMin) / dailyRange) * 100);
-            var margin = mr < 95 ? mr : 95 // cap margin at 95%
-            element.style.setProperty('margin-right', margin + '%', 'important');
-            element.innerHTML = temp + '°'
+        // Loop through, get circles and rectangles, and set rect width based on circle value
+        tempCells.forEach(cell => {
+            const circle = cell.querySelector('.circle'); 
+            const rectangle = cell.querySelector('.rectangle'); 
+
+            if (circle && rectangle) {
+                let value = parseFloat(circle.innerText) || 0; 
+                let widthPercentage = 100 * (value - dailyMin) / (dailyRange)
+                rectangle.style.width = `${widthPercentage}%`; 
+            }
         });
-
-        // NEED TO FIGURE OUT WHAT TO DO WHERE MARGIN-RIGHT IS 100 or over 100
-        /*
-            Another thing we can/should do is separate the tempfill div from the div that contains the value
-        */
-
     }
 }
 

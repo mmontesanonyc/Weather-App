@@ -126,8 +126,8 @@ hr {
 
 .oval {
   width: 100%;  /* Adjust as needed */
-  height: 35px;  /* Controls the oval shape */
-  background-color: lightgray;
+  height: 30px;  /* Controls the oval shape */
+  border: 1px solid rgb(207, 185, 185);
   border-radius: 25px; /* Half of height makes it oval */
   display: flex;
   justify-content: space-between;
@@ -185,6 +185,7 @@ thead {
   flex-direction: column; /* Stack items vertically */
   align-items: center; /* Center items horizontally */
   justify-content: center; /* Center items vertically (optional) */
+  white-space: nowrap;
 }
 
 .card {
@@ -200,7 +201,7 @@ thead {
 }
 
 .cloud {
-  color: darkgray;
+  color: black;
 }
 
 .text-offset {
@@ -209,4 +210,30 @@ thead {
 }
 
 
+.tempcell {
+  display: flex;
+  align-items: center; /* Align vertically */
+}
 
+.rectangle {
+  height: 4px;
+  background-color: rgb(246, 246, 246);
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(247, 237, 237);
+  color: black;
+  text-align: center;
+  min-width: 15px; /* Minimum size */
+  min-height: 25px;
+  border-radius: 25px; /* Makes it a circle */
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px;
+  line-height: 1.2; /* Helps keep text balanced */
+  height: auto;
+  white-space: nowrap; /* Ensures text doesn't wrap */
+}
