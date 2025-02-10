@@ -256,19 +256,25 @@ function drawHourlyValues(x) {
             } else {}
         }
 
+        var dailyRange = dailyMax - dailyMin
+        console.log(day, dailyRange)
+
         // get all things in day+TableBody that have a classlist tempFill
         var tableID = '#' + day + 'TableBody'
         const tempfillElements = document.querySelectorAll(`${tableID} .tempfill`);
 
         tempfillElements.forEach(element => {
             var temp = parseFloat(element.innerText);
-            var mr = 100 - (temp / dailyMax) * 100;
-            element.style.setProperty('margin-right', mr + '%', 'important');
+            var mr = (100 - ((temp - dailyMin) / dailyRange) * 100);
+            var margin = mr < 95 ? mr : 95 // cap margin at 95%
+            element.style.setProperty('margin-right', margin + '%', 'important');
             element.innerHTML = temp + '°'
         });
-        
 
-        // for each, the margin-right should be 100 - (innerHTML / dailyMax)
+        // NEED TO FIGURE OUT WHAT TO DO WHERE MARGIN-RIGHT IS 100 or over 100
+        /*
+            Another thing we can/should do is separate the tempfill div from the div that contains the value
+        */
 
     }
 }
