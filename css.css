@@ -203,6 +203,10 @@ thead {
   color: darkgray;
 }
 
+.text-offset {
+  position: relative;
+  left: 5px;
+}
 
 
 

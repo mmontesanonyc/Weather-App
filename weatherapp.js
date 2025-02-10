@@ -112,6 +112,9 @@ function printTodaySummary(x) {
     // Icon
     document.getElementById('iconPrint2').src = x.current.condition.icon
 
+    // AQI
+    document.getElementById('aqiPrint').innerHTML = x.current.air_quality["us-epa-index"]
+
     // Change of precip
     document.getElementById('rainChancePrint').innerText = x.forecast.forecastday[0].day.daily_chance_of_rain + '%'
     document.getElementById('snowChancePrint').innerText = x.forecast.forecastday[0].day.daily_chance_of_snow + '%'
@@ -225,8 +228,10 @@ function drawHourlyValues(x) {
                 let cell3 = document.createElement('td')
                     cell3.classList.add('border-left')
 
+
                 let tempDiv = document.createElement('div')
-                    tempDiv.innerHTML = parseInt(temp)
+                    var temp2 = parseInt(temp)
+                    tempDiv.innerHTML = `<span class="text-offset">${temp2}</span>`
                     tempDiv.classList.add('tempfill')
                 cell3.appendChild(tempDiv)
 
@@ -256,8 +261,8 @@ function drawHourlyValues(x) {
         const tempfillElements = document.querySelectorAll(`${tableID} .tempfill`);
 
         tempfillElements.forEach(element => {
-            var temp = parseFloat(element.innerText); // Ensure we get a number
-            var mr = 100 - (temp / dailyMax) * 100;   // Correct margin calculation
+            var temp = parseFloat(element.innerText);
+            var mr = 100 - (temp / dailyMax) * 100;
             element.style.setProperty('margin-right', mr + '%', 'important');
             element.innerHTML = temp + '°'
         });
