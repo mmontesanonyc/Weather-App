@@ -163,8 +163,8 @@ function printRangeHeaders(x) {
 function drawDailyValues(day,low,high) {
     const lowID = day + 'Low'
     const highID = day + 'High'
-    document.getElementById(lowID).innerText = low
-    document.getElementById(highID).innerText = high
+    document.getElementById(lowID).innerText = low + '°'
+    document.getElementById(highID).innerText = high + '°'
 }
 
 function drawHourlyValues(x) {
@@ -216,8 +216,12 @@ function drawHourlyValues(x) {
                 let cell1 = document.createElement('td')
                     cell1.innerHTML = cloudPct + '%'
                     cell1.classList.add('pl-1')
+                    cell1.classList.add('cloud')
+                    cell1.style.opacity = cloudPct/100 < .2 ? .2 : cloudPct/100
                 let cell2 = document.createElement('td')
                     cell2.innerHTML = precipChance + '%'
+                    cell2.classList.add('precipitation')
+                    cell2.style.opacity = precipChance/100 < .2 ? .2 : precipChance/100
                 let cell3 = document.createElement('td')
                     cell3.classList.add('border-left')
 
@@ -255,6 +259,7 @@ function drawHourlyValues(x) {
             var temp = parseFloat(element.innerText); // Ensure we get a number
             var mr = 100 - (temp / dailyMax) * 100;   // Correct margin calculation
             element.style.setProperty('margin-right', mr + '%', 'important');
+            element.innerHTML = temp + '°'
         });
         
 
