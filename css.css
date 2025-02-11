@@ -242,3 +242,19 @@ thead {
   height: auto;
   white-space: nowrap; /* Ensures text doesn't wrap */
 }
+
+.vis {
+  width:93%!important;
+  height: 500px;
+}
+
+.card {
+  width: 100%!important;
+  padding: 10px 0px;
+}
+
+.card-body {
+  width: 100%!important;
+  padding: 10px 0px;
+
+}

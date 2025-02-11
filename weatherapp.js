@@ -23,6 +23,7 @@ function fetchZipCode(position) {
         .then(response => response.json())
         .then(data => {
             // Get the zip code from the response
+            console.log('***GETTING LOCATION FROM BROWSER')
             const zipCode = data.results[0]?.components?.postcode || "Zip code not found";
             console.log(`Your zip code is: ${zipCode}`);
             
@@ -88,12 +89,13 @@ function fetchWeatherData(x) {
         .then(response => {return response.json()})
         .then(data => {
         apiData = data
-        console.log('***Loading weather data:')
+        console.log('***LOADING WEATHER DATA')
         console.log(apiData)
         printTodaySummary(apiData)
         drawTableShells(apiData)
         printRangeHeaders(apiData)
         // drawHourlyValues(apiData)
+        ingestHourlyData(apiData)
     })
 }
 
@@ -134,7 +136,6 @@ function drawTableShells(x) {
 
     var holder = document.getElementById('forecastHolder');
     holder.innerHTML = ''; // Clear previous content
-    console.log('cleared holder');
 
     for (let i = 0; i < x.forecast.forecastday.length; i++) {
         let rowId = `day${i}Row`;
@@ -164,23 +165,8 @@ function drawTableShells(x) {
             <!-- DAY ${i} COLLAPSE -->
             <div class="col-12">
                 <div class="collapse" id="${collapseId}">
-                    <div class="card card-body">
-                        <table>
-                            <colgroup>
-                                <col style="width:10%">
-                                <col style="width:10%">
-                                <col style="width:10%">
-                            </colgroup>
-                            <thead>
-                                <tr class="smallcaps fs-sm">
-                                    <th><i class="fas fa-clock"></i></th>
-                                    <th><i class="fas fa-cloud"></i></th>
-                                    <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                    <th><i class="fas fa-thermometer-quarter"></i></th>
-                                </tr>
-                            </thead>
-                            <tbody id="day${i}TableBody"></tbody>
-                        </table>
+                    <div class="card card-body" >
+                    <div class="vis" id="day${i}vis">
                     </div>
                 </div>
             </div>
@@ -215,6 +201,21 @@ function addRowClickListener() {
 
         // Toggle the clicked collapse
         $(collapse).collapse('toggle');
+
+        // Trigger Vega-Lite view update if the collapse is now open
+        if (collapse.classList.contains('show')) {
+            // Find the Vega-Lite chart container inside the collapse
+            const vegaContainer = collapse.querySelector('.vis'); // Adjust the class to match your Vega-Lite chart container
+
+            if (vegaContainer) {
+                const vegaView = vega.container(vegaContainer).view; // Access the Vega-Lite view
+
+                // Resize the Vega-Lite view to fit the container
+                vegaView.resize();
+            }
+        }
+
+
     });
 }
 
@@ -223,9 +224,6 @@ function printRangeHeaders(x) {
 
     // GET RANGE, MIN, AND MAX
     var tempRange = [];
-
-    console.log('Range Headers for:')
-    console.log(x)
 
     for (let i = 0; i < x.forecast.forecastday.length; i++) {
 
@@ -253,7 +251,7 @@ function printRangeHeaders(x) {
         let width = (100 * (high - low) / rangeValue)
 
         document.getElementById(`day${j}Oval`).style.width = width + '%'
-            if (width < 20) {
+            if (width < 25) {
                 document.getElementById(`day${j}Low`).classList.add('tiny') // fallback for overlaps for small ranges
             } else {}
 
@@ -264,6 +262,137 @@ function printRangeHeaders(x) {
     }
 
 }
+
+
+function ingestHourlyData(x) {
+    console.log('***ASSEMBLING HOURLY DATA')
+
+    // Loop through days
+    for (let i = 0; i < x.forecast.forecastday.length; i ++) {
+        var dayData = [];
+
+        // Loop through hours, extract values and put into data object
+        for (let j = 0; j < x.forecast.forecastday[i].hour.length; j++) {
+            let hour = x.forecast.forecastday[i].hour[j]
+            let dayObject = {
+                time: hour.time,
+                time_epoch: hour.time_epoch,
+                temp_f: hour.temp_f,
+                cloud: hour.cloud,
+                precip_in: hour.precip_in,
+                chance_of_rain: hour.chance_of_rain,
+                chance_of_snow: hour.chance_of_snow,
+                pm2_5: hour.pn2_5
+            }
+
+            dayData.push(dayObject);
+
+            // SEND DAY DATA TO CHARTING FUNCTION
+            drawChart(i,dayData)
+        }
+    }
+}
+
+function drawChart(day,data) {
+    var visSpec = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "data": {
+          "values": data
+        },
+          "config": {
+          "title": {
+            "anchor": "end",
+            "fontSize": 10 
+          },
+          "axisY": {
+            "tickCount": 3
+          },
+          "axisX": {
+            "grid": false,  
+            "tickCount": 5 
+          },
+          "view": {
+            "stroke": null
+          }
+        },
+        "vconcat": [
+          {
+            "width": "container",
+            "height": 100,
+            "title": "Temperature (°F)",
+            "mark": {
+              "type": "bar"
+            },
+            "encoding": {
+              "x": {
+                "field": "time",
+                "type": "temporal",
+                "title": "",
+                "axis": {"format": "%I%p"}
+              },
+              "y": {"field": "temp_f", "type": "quantitative", "title": ""}
+            }
+          },
+          {
+            "width": "container",
+            "height": 100,
+            "title": "Chance of rain",
+            "mark": {
+              "type": "area"
+            },
+            "encoding": {
+              "x": {
+                "field": "time",
+                "type": "temporal",
+                "title": "",
+                "axis": {"format": "%I%p"}
+              },
+              "y": {
+                "field": "chance_of_rain",
+                "type": "quantitative",
+                "title": "",
+                "scale": {"domain": [1, 100]},
+                "axis": {
+                  "format": ".0f",
+                  "labelExpr": "datum.value + '%'"
+                }
+              }
+            }
+          },
+          {
+            "width": "container",
+            "height": 100,
+            "title": "Cloud cover",
+            "mark": {
+              "type": "line",
+              "interpolate": "natural"
+            },
+            "encoding": {
+              "x": {
+                "field": "time",
+                "type": "temporal",
+                "title": "",
+                "axis": {"format": "%I%p"}
+              },
+              "y": {
+                "field": "cloud",
+                "type": "quantitative",
+                "title": "",
+                "scale": {"domain": [1, 100]},
+                "axis": {
+                  "format": ".0f",
+                  "labelExpr": "datum.value + '%'"
+                }
+              }
+            }
+          }
+        ]
+      }
+    
+    var destination = `#day${day}vis`
+    vegaEmbed(destination,visSpec, {actions: false})
+}
+
 
 
 function drawHourlyValues(x) {
