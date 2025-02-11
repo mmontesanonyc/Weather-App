@@ -9,3 +9,8 @@ This uses:
 - Basic Bootstrap and JavaScript
 
 If you seriously like this and would like me to develop it further, feel free to file an issue with any ideas, suggestions, or desires.
+
+## Future Modifications
+I will likely revise the forecast-days dropdown displays, because while using JS and CSS to create data visualizations, it'll be easier to manage just sending those to a charting library and customizing. 
+
+I'm considering using the [weather.gov API](https://weather-gov.github.io/api/general-faqs), or the [Open-Meteo API](https://open-meteo.com/en/docs#current=is_day&hourly=temperature_2m,precipitation_probability,precipitation,cloud_cover), instead of the current one.
