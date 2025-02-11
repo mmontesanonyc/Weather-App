@@ -93,137 +93,14 @@
                 </div>
 
                 <!-- FORECAST ACCORDIONS -->
-                <div class="row resultsContainer hide">
-                    <!-- TODAY HEADER -->
-                    <div class="col-12">
-                        <div class="row py-2" id="todayRow">
-                            <div class="col-4">
-                                <span> 
-                                    <img src="sampleimage.png" id='todayIcon' alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                                    <span class="font-weight-bold">Today</span>
-                                </span>
+                <div class="row resultsContainer hide" id="forecastHolder">
 
-                            </div>
-                            <div class="col">
-                                <div class="oval" id="todayOval">
-                                    <span class="left" id="todayLow">1</span>
-                                    <span class="right" id="todayHigh">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TODAY COLLAPSE -->
-                    <div class="col-12">
-                        <div class="collapse" id="todayCollapse">
-                            <div class="card card-body">
-                                <table>
-                                    <colgroup>
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="smallcaps fs-sm">
-                                            <th><i class="fas fa-clock"></i></th>
-                                            <th><i class="fas fa-cloud"></i></th>
-                                            <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                            <th><i class="fas fa-thermometer-quarter"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="todayTableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Repeat the structure for Tomorrow and Day 3 (No buttons) -->
-
-                    <div class="col-12">
-                        <div class="row py-2" id="tomorrowRow">
-                            <div class="col-4">
-                                <span> 
-                                    <img src="sampleimage.png" id='tomorrowIcon' alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                                    <span class="font-weight-bold" id="day2">Today</span>
-                                </span>
-                            </div>
-                            <div class="col">
-                                <div class="oval" id="tomorrowOval">
-                                    <span class="left" id="tomorrowLow">1</span>
-                                    <span class="right" id="tomorrowHigh">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="collapse" id="tomorrowCollapse">
-                            <div class="card card-body">
-                                <table>
-                                    <colgroup>
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="smallcaps fs-sm">
-                                            <th><i class="fas fa-clock"></i></th>
-                                            <th><i class="fas fa-cloud"></i></th>
-                                            <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                            <th><i class="fas fa-thermometer-quarter"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tomorrowTableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="row py-2" id="day3Row">
-                            <div class="col-4">
-                                <span> 
-                                    <img src="sampleimage.png" id='day3Icon' alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                                    <span class="font-weight-bold" id="day3">Next day</span>
-                                </span>
-                            </div>
-                            <div class="col">
-                                <div class="oval" id="day3Oval">
-                                    <span class="left" id="day3Low">1</span>
-                                    <span class="right" id="day3High">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="collapse" id="day3Collapse">
-                            <div class="card card-body">
-                                <table>
-                                    <colgroup>
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="smallcaps fs-sm">
-                                            <th><i class="fas fa-clock"></i></th>
-                                            <th><i class="fas fa-cloud"></i></th>
-                                            <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                            <th><i class="fas fa-thermometer-quarter"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="day3TableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12">
                         <HR>
-                        <p>Thanks for using my weather app. This uses <a href="www.weatherapi">WeatherAPI</a> and simple JS + Bootstrap. If you like it, feel free to <a href="https://venmo.com/code?user_id=2293559168335872144&created=1739136186">Venmo me a few bucks</a>.</p>
+                        <p>Weather App uses <a href="www.weatherapi">WeatherAPI</a>. If you like Weather App, feel free to <a href="https://venmo.com/code?user_id=2293559168335872144&created=1739136186">Venmo me a few bucks</a>.</p>
                     </div>
                 </div>
             </div>
@@ -250,30 +127,7 @@
 
 
     <script> 
-// Function to handle row clicks and toggle collapse, ensuring only one is open at a time
-function addRowClickListener(rowId, collapseId) {
-    const row = document.getElementById(rowId);
-    const collapse = document.getElementById(collapseId);
-    
-    row.addEventListener('click', function () {
-        // Close all collapses
-        const allCollapses = document.querySelectorAll('.collapse');
-        allCollapses.forEach(function(c) {
-            // Collapse all open collapses except the one that is clicked
-            if (c !== collapse) {
-                $(c).collapse('hide');
-            }
-        });
 
-        // Toggle the clicked collapse (open it if closed, close it if open)
-        $(collapse).collapse('toggle');
-    });
-}
-
-// Add event listeners for each row
-addRowClickListener('todayRow', 'todayCollapse');
-addRowClickListener('tomorrowRow', 'tomorrowCollapse');
-addRowClickListener('day3Row', 'day3Collapse');
 
     </script>
 
