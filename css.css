@@ -240,13 +240,8 @@ thead {
 }
 
 .vis-container {
-  min-width: 350px!important;
   width:100%!important;
-  height: 450px;
-  background: white;
-  border-radius: 5px;
-  border: 1px solid lightgray;
-  padding: 5px;
+  height: 475px;
 }
 
 .vis {
@@ -257,3 +252,6 @@ thead {
   width: 100%!important;
 }
 
+.fs-xs {
+  font-size: 10px;
+}
