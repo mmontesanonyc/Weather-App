@@ -7,10 +7,16 @@ This uses:
 - Browser geocoding (or a ZIP Code query: for now, it only works in the USA)
 - The weatherapi.com weather api
 - Basic Bootstrap and JavaScript
+- Vega-Lite for charts
 
-If you seriously like this and would like me to develop it further, feel free to file an issue with any ideas, suggestions, or desires.
+## Assumptions
+This currently works by looking up your ZIP Code, so it only works in the USA.
+
+For the daily forecast drop-downs, the page checks to see if there is a higher daily chance of rain or snow. It shows a chart of the one with the higher chance, and text of the one with a lower chance.
 
 ## Future Modifications
-I will likely revise the forecast-days dropdown displays, because while using JS and CSS to create data visualizations, it'll be easier to manage just sending those to a charting library and customizing. 
-
 I'm considering using the [weather.gov API](https://weather-gov.github.io/api/general-faqs), or the [Open-Meteo API](https://open-meteo.com/en/docs#current=is_day&hourly=temperature_2m,precipitation_probability,precipitation,cloud_cover), instead of the current one.
+
+I'll likely continue to revise the display and functionality. 
+
+If you seriously like this and would like me to develop it further, feel free to file an issue with any ideas, suggestions, or desires.
