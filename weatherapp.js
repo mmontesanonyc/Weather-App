@@ -145,11 +145,12 @@ function drawTableShells(x) {
             <!-- DAY ${i} HEADER -->
             <div class="col-12">
                 <div class="row border-top py-2 dayHeader" id="${rowId}" data-target="${collapseId}">
-                    <div class="col-4">
-                        <span> 
+                    <div class="col-6">
+                        <span class="d-block"> 
                             <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
                             <span class="font-weight-bold" id="day${i}">Today</span>
                         </span>
+                        <span class="fs-xs" id="day${i}Condition">Condition</span>
                     </div>
                     <div class="col">
                             <div class="oval" id="day${i}Oval">
@@ -163,7 +164,7 @@ function drawTableShells(x) {
 
         let collapseHTML = `
             <!-- DAY ${i} COLLAPSE -->
-            <div class="col-12">
+            <div class="col-12 px-2">
                 <div class="dayContent sr-only mb-4" id="${collapseId}">
                     <div class="vis-container">
                         <div class="vis" id="day${i}vis">Vis goes here</div>
@@ -184,7 +185,6 @@ function drawTableShells(x) {
     
         // Add the event listener
         row.addEventListener('click', () => {
-            console.log('row clicked!', targetId);
 
             const chartDivs = document.querySelectorAll('.dayContent')
             chartDivs.forEach(chart => {
@@ -193,7 +193,7 @@ function drawTableShells(x) {
 
             const targetRow = document.getElementById(targetId);
             if (targetRow) {
-                targetRow.classList.toggle('sr-only'); // Toggle the 'hide' class
+                targetRow.classList.toggle('sr-only'); // Toggle the class
             }
         });
     });
@@ -240,6 +240,7 @@ function printRangeHeaders(x) {
         document.getElementById(`day${j}Low`).innerText = low + '°'
         document.getElementById(`day${j}High`).innerText = high + '°'
         document.getElementById(`day${j}Icon`).src = x.forecast.forecastday[j].day.condition.icon
+        document.getElementById(`day${j}Condition`).innerText = x.forecast.forecastday[j].day.condition.text
     }
 
 }
@@ -252,6 +253,10 @@ function ingestHourlyData(x) {
     for (let i = 0; i < x.forecast.forecastday.length; i ++) {
         var dayData = [];
 
+        var dayChanceRain = x.forecast.forecastday[i].day.daily_chance_of_rain
+        var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
+        var precip = dayChanceRain < dayChanceSnow ? 'snow' : 'rain'
+
         // Loop through hours, extract values and put into data object
         for (let j = 0; j < x.forecast.forecastday[i].hour.length; j++) {
             let hour = x.forecast.forecastday[i].hour[j]
@@ -263,154 +268,182 @@ function ingestHourlyData(x) {
                 precip_in: hour.precip_in,
                 chance_of_rain: hour.chance_of_rain,
                 chance_of_snow: hour.chance_of_snow,
-                pm2_5: hour.pn2_5
+                pm2_5: hour.air_quality.pm2_5
             }
 
             dayData.push(dayObject);
 
-            // SEND DAY DATA TO CHARTING FUNCTION
-            drawChart(i,dayData)
         }
+
+        // Width test, for some charting approaches
+        var element = document.getElementById('day0vis');
+        if (element) {
+            var width = element.offsetWidth;
+        }
+
+        // SEND DAY DATA TO CHARTING FUNCTION
+        drawChart(i,dayData,precip)
+
     }
 }
 
-function drawChart(day,data) {
+function drawChart(day,data,precip) {
+    var mainPrecip      = precip
+    var secondPrecip    = precip === 'rain'? 'snow' : 'rain'
+
+    var mainVariable = 'chance_of_'+precip
+    var secondVariable = 'chance_of_'+secondPrecip
+
+    var mainDisplay =  {
+        "width": "container",
+        "height": 90,
+        "title": 'Precipitation: ' + mainPrecip,
+        "mark": {
+          "type": "area",
+          "interpolate": "basis",
+          "color": {
+            "x1": 1,
+            "y1": 1,
+            "x2": 1,
+            "y2": 0,
+            "gradient": "linear",
+            "stops": [
+              {"offset": 0, "color": "white"},
+              {"offset": 1, "color": "lightblue"}
+            ]
+          }
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "type": "temporal",
+            "title": "",
+            "axis": {"format": "%I%p"}
+          },
+          "y": {
+            "field": mainVariable,
+            "type": "quantitative",
+            "title": "",
+            "scale": {"domain": [0, 100]},
+            "axis": {
+              "format": ".0f",
+              "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
+              "orient": "right"
+            }
+          }
+        }
+      }
+
+      var secondDisplay = {
+        "width": "container",
+        "height": 30,
+        "title": {"text": `Precipitation: ${secondPrecip}`, "align": "left", "dy": 10},
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "baseline": "middle",
+          "fontSize": 6
+        },
+        "encoding": {
+          "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+          "text": {
+            "field": secondVariable,
+            "type": "quantitative",
+            "format": ".0f",
+            "condition": {
+              "test": `datum.${secondVariable} !== null`,
+              "value": {"expr": `datum.${secondVariable} + '%'`}
+            }
+          },
+          "opacity": {
+            "field": secondVariable,
+            "type": "quantitative",
+            "scale": {"domain": [0, 100]},
+            "legend": false
+          }
+        }
+      }
+
     var visSpec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "data": {
           "values": data
         },
-        "width": "container",
         "config": {
           "title": {"anchor": "start", "fontSize": 10},
-          "axisY": {"tickCount": 2, "domain": false, "tickColor": "lightgray"},
-          "axisX": {"grid": false, "tickCount": 5, "domain": true},
-          "view": {"stroke": null}
+          "axisY": {"tickCount": 2, "domain": true, "tickColor": "lightgray"},
+          "axisX": {"grid": false, "tickCount": 4, "domain": true},
+          "view": {"stroke": null},
+          "background": "transparent"
         },
         "vconcat": [
-          {
-            "width": "container",
-            "height": 100,
-            "title": {"text": "Temperature", "dy": -19, "align": "left"},
-            "mark": {"type": "point", "size": 150, "filled": true},
-            "encoding": {
-              "x": {
-                "field": "time",
-                "type": "temporal",
-                "title": "",
-                "axis": {
-                  "format": "%I%p"
+            {
+              "width": "container",
+              "height": 90,
+              "title": {"text": "Temperature", "dy": -19, "align": "left"},
+              "mark": {"type": "point", "size": 150, "filled": true},
+              "encoding": {
+                "x": {
+                  "field": "time",
+                  "type": "temporal",
+                  "title": "",
+                  "axis": {
+                    "format": "%I%p"
+                  },
+                  
                 },
-                
-              },
-              "y": {
-                "field": "temp_f",
-                "type": "quantitative",
-                "title": "",
-                "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"}
-              },
-              "color": {"value": "coral"}
-            }
-          },
-          {
-            "width": "container",
-            "height": 30,
-            "title": {"text": "Rain", "dy": 10, "align": "left"},
-            "mark": {
-              "type": "text",
-              "align": "center",
-              "baseline": "middle",
-              "fontSize": 8
+                "y": {
+                  "field": "temp_f",
+                  "type": "quantitative",
+                  "title": "",
+                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"}
+                },
+                "color": {"value": "coral"}
+              }
             },
-            "encoding": {
-              "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
-              "text": {
-                "field": "chance_of_rain",
-                "type": "quantitative",
-                "format": ".0f",
-                "condition": {
-                  "test": "datum.chance_of_rain !== null",
-                  "value": {"expr": "datum.chance_of_rain + '%'"}
+            mainDisplay,
+            secondDisplay,
+            {
+              "width": "container",
+              "height": 90,
+              "title": "Cloud cover",
+              "mark": {
+                "type": "area",
+                "interpolate": "basis",
+                "color": {
+                  "x1": 1,
+                  "y1": 1,
+                  "x2": 1,
+                  "y2": 0,
+                  "gradient": "linear",
+                  "stops": [
+                    {"offset": 0, "color": "white"},
+                    {"offset": 1, "color": "darkgray"}
+                  ]
                 }
               },
-              "opacity": {
-                "field": "chance_of_rain",
-                "type": "quantitative",
-                "scale": {"domain": [0, 100]},
-                "legend": false
-              }
-            }
-          },
-          {
-            "width": "container",
-            "height": 30,
-            "title": {"text": "Snow", "align": "left", "dy": 10},
-            "mark": {
-              "type": "text",
-              "align": "center",
-              "baseline": "middle",
-              "fontSize": 8
-            },
-            "encoding": {
-              "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
-              "text": {
-                "field": "chance_of_snow",
-                "type": "quantitative",
-                "format": ".0f",
-                "condition": {
-                  "test": "datum.chance_of_snow !== null",
-                  "value": {"expr": "datum.chance_of_snow + '%'"}
-                }
-              },
-              "opacity": {
-                "field": "chance_of_snow",
-                "type": "quantitative",
-                "scale": {"domain": [0, 100]},
-                "legend": false
-              }
-            }
-          },
-          {
-            "width": "container",
-            "height": 100,
-            "title": "Cloud cover",
-            "mark": {
-              "type": "area",
-              "interpolate": "basis",
-              "color": {
-                "x1": 1,
-                "y1": 1,
-                "x2": 1,
-                "y2": 0,
-                "gradient": "linear",
-                "stops": [
-                  {"offset": 0, "color": "white"},
-                  {"offset": 1, "color": "darkgray"}
-                ]
-              }
-            },
-            "encoding": {
-              "x": {
-                "field": "time",
-                "type": "temporal",
-                "title": "",
-                "axis": {"format": "%I%p"}
-              },
-              "y": {
-                "field": "cloud",
-                "type": "quantitative",
-                "title": "",
-                "scale": {"domain": [0, 100]},
-                "axis": {
-                  "format": ".0f",
-                  "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
-                  "orient": "right"
+              "encoding": {
+                "x": {
+                  "field": "time",
+                  "type": "temporal",
+                  "title": "",
+                  "axis": {"format": "%I%p"}
+                },
+                "y": {
+                  "field": "cloud",
+                  "type": "quantitative",
+                  "title": "",
+                  "scale": {"domain": [0, 100]},
+                  "axis": {
+                    "format": ".0f",
+                    "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
+                    "orient": "right"
+                  }
                 }
               }
             }
-          }
-        ],
-        "spacing": 20
+          ],
+          "spacing": 20
       }
     
     var destination = `#day${day}vis`
