@@ -202,7 +202,6 @@ function drawTableShells(x) {
 
 
 function printRangeHeaders(x) {
-
     // GET RANGE, MIN, AND MAX
     var tempRange = [];
 
@@ -257,6 +256,13 @@ function ingestHourlyData(x) {
         var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
         var precip = dayChanceRain < dayChanceSnow ? 'snow' : 'rain'
 
+        var maxtemp = x.forecast.forecastday[i].day.maxtemp_f + 3
+        var mintemp = x.forecast.forecastday[i].day.mintemp_f - 3
+
+        domain = [mintemp,maxtemp]
+
+        
+
         // Loop through hours, extract values and put into data object
         for (let j = 0; j < x.forecast.forecastday[i].hour.length; j++) {
             let hour = x.forecast.forecastday[i].hour[j]
@@ -282,12 +288,12 @@ function ingestHourlyData(x) {
         }
 
         // SEND DAY DATA TO CHARTING FUNCTION
-        drawChart(i,dayData,precip)
+        drawChart(i,dayData,precip,domain)
 
     }
 }
 
-function drawChart(day,data,precip) {
+function drawChart(day,data,precip,domain) {
     var mainPrecip      = precip
     var secondPrecip    = precip === 'rain'? 'snow' : 'rain'
 
@@ -371,7 +377,7 @@ function drawChart(day,data,precip) {
         },
         "config": {
           "title": {"anchor": "start", "fontSize": 10},
-          "axisY": {"tickCount": 2, "domain": true, "tickColor": "lightgray"},
+          "axisY": {"tickCount": 3, "domain": true, "tickColor": "lightgray"},
           "axisX": {"grid": false, "tickCount": 4, "domain": true},
           "view": {"stroke": null},
           "background": "transparent"
@@ -396,7 +402,10 @@ function drawChart(day,data,precip) {
                   "field": "temp_f",
                   "type": "quantitative",
                   "title": "",
-                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"}
+                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"},
+                  "scale": {
+                    "domain": domain
+                  }
                 },
                 "color": {"value": "coral"}
               }
@@ -443,7 +452,7 @@ function drawChart(day,data,precip) {
               }
             }
           ],
-          "spacing": 20
+          "spacing": 25
       }
     
     var destination = `#day${day}vis`
