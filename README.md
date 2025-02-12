@@ -17,6 +17,6 @@ For the daily forecast drop-downs, the page checks to see if there is a higher d
 ## Future Modifications
 I'm considering using the [weather.gov API](https://weather-gov.github.io/api/general-faqs), or the [Open-Meteo API](https://open-meteo.com/en/docs#current=is_day&hourly=temperature_2m,precipitation_probability,precipitation,cloud_cover), instead of the current one.
 
-I'll likely continue to revise the display and functionality. 
+I'll likely continue to revise the display and functionality, including [revising the day-forecast headers to something like this](https://gist.github.com/mmontesanonyc/ece8106f7a4a60621073a6ae0bd5fcee).
 
 If you seriously like this and would like me to develop it further, feel free to file an issue with any ideas, suggestions, or desires.
