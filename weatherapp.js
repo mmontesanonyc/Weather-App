@@ -254,6 +254,11 @@ function ingestHourlyData(x) {
     for (let i = 0; i < x.forecast.forecastday.length; i ++) {
         var dayData = [];
 
+        var dayChanceRain = x.forecast.forecastday[i].day.daily_chance_of_rain
+        var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
+        var precip = dayChanceRain < dayChanceSnow ? 'snow' : 'rain'
+        console.log(precip)
+
         // Loop through hours, extract values and put into data object
         for (let j = 0; j < x.forecast.forecastday[i].hour.length; j++) {
             let hour = x.forecast.forecastday[i].hour[j]
@@ -278,17 +283,58 @@ function ingestHourlyData(x) {
         // Check if the element exists before trying to get its width
         if (element) {
             var width = element.offsetWidth; // Gets the width of the element
-            console.log('Element width:', width);
+            // console.log('Element width:', width);
         }
 
         // SEND DAY DATA TO CHARTING FUNCTION
-        drawChart(i,dayData)
+        drawChart(i,dayData,precip)
 
-        console.log(dayData)
     }
 }
 
-function drawChart(day,data) {
+function drawChart(day,data,precip) {
+
+    var precipVariable = 'chance_of_'+precip
+
+    var precipDisplay =  {
+        "width": "container",
+        "height": 100,
+        "title": 'Precipitation: ' + precip,
+        "mark": {
+          "type": "area",
+          "interpolate": "basis",
+          "color": {
+            "x1": 1,
+            "y1": 1,
+            "x2": 1,
+            "y2": 0,
+            "gradient": "linear",
+            "stops": [
+              {"offset": 0, "color": "white"},
+              {"offset": 1, "color": "lightblue"}
+            ]
+          }
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "type": "temporal",
+            "title": "",
+            "axis": {"format": "%I%p"}
+          },
+          "y": {
+            "field": precipVariable,
+            "type": "quantitative",
+            "title": "",
+            "scale": {"domain": [0, 100]},
+            "axis": {
+              "format": ".0f",
+              "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
+              "orient": "right"
+            }
+          }
+        }
+      }
 
     var visSpec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
@@ -327,64 +373,7 @@ function drawChart(day,data) {
                 "color": {"value": "coral"}
               }
             },
-            {
-              "width": "container",
-              "height": 30,
-              "title": {"text": "Rain", "dy": 10, "align": "left"},
-              "mark": {
-                "type": "text",
-                "align": "center",
-                "baseline": "middle",
-                "fontSize": 8
-              },
-              "encoding": {
-                "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
-                "text": {
-                  "field": "chance_of_rain",
-                  "type": "quantitative",
-                  "format": ".0f",
-                  "condition": {
-                    "test": "datum.chance_of_rain !== null",
-                    "value": {"expr": "datum.chance_of_rain + '%'"}
-                  }
-                },
-                "opacity": {
-                  "field": "chance_of_rain",
-                  "type": "quantitative",
-                  "scale": {"domain": [0, 100]},
-                  "legend": false
-                }
-              }
-            },
-            {
-              "width": "container",
-              "height": 30,
-              "title": {"text": "Snow", "align": "left", "dy": 10},
-              "mark": {
-                "type": "text",
-                "align": "center",
-                "baseline": "middle",
-                "fontSize": 8
-              },
-              "encoding": {
-                "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
-                "text": {
-                  "field": "chance_of_snow",
-                  "type": "quantitative",
-                  "format": ".0f",
-                  "condition": {
-                    "test": "datum.chance_of_snow !== null",
-                    "value": {"expr": "datum.chance_of_snow + '%'"}
-                  }
-                },
-                "opacity": {
-                  "field": "chance_of_snow",
-                  "type": "quantitative",
-                  "scale": {"domain": [0, 100]},
-                  "legend": false
-                }
-              }
-            },
+            precipDisplay,
             {
               "width": "container",
               "height": 100,
