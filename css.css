@@ -243,13 +243,18 @@ thead {
   white-space: nowrap; /* Ensures text doesn't wrap */
 }
 
-.vis {
+.vis-container {
   min-width: 350px!important;
-  width:90%!important;
+  width:100%!important;
   height: 450px;
   background: white;
   border-radius: 5px;
   border: 1px solid lightgray;
+  padding: 5px;
+}
+
+.vis {
+  width:90%;
 }
 
 .dayContent {

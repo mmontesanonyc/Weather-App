@@ -144,7 +144,7 @@ function drawTableShells(x) {
         let rowHTML = `
             <!-- DAY ${i} HEADER -->
             <div class="col-12">
-                <div class="row py-2 toggle-row" id="${rowId}" data-collapse="${collapseId}">
+                <div class="row mt-4 py-2 toggle-row" id="${rowId}" data-collapse="${collapseId}">
                     <div class="col-4">
                         <span> 
                             <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
@@ -164,8 +164,10 @@ function drawTableShells(x) {
         let collapseHTML = `
             <!-- DAY ${i} COLLAPSE -->
             <div class="col-12">
-                <div class="dayContent show p-2" id="${collapseId}">
-                    <div class="vis" id="day${i}vis">
+                <div class="dayContent show" id="${collapseId}">
+                    <div class="vis-container">
+                        <div class="vis" id="day${i}vis">Vis goes here</div>
+                    </div>
                 </div>
             </div>
         `;
@@ -175,46 +177,6 @@ function drawTableShells(x) {
         holder.insertAdjacentHTML('beforeend', collapseHTML);
     }
 
-    // Add event delegation to ensure all dynamically added rows get the click event
-    addRowClickListener();
-}
-
-// Function to handle row clicks and toggle collapse, ensuring only one is open at a time
-function addRowClickListener() {
-    document.getElementById('forecastHolder').addEventListener('click', function (event) {
-        let row = event.target.closest('.toggle-row');
-        if (!row) return; // Exit if the click was not on a row
-
-        let collapseId = row.getAttribute('data-collapse');
-        let collapse = document.getElementById(collapseId);
-
-        if (!collapse) return;
-
-        // Close all other collapses
-        document.querySelectorAll('.collapse.show').forEach(function (c) {
-            if (c !== collapse) {
-                $(c).collapse('hide');
-            }
-        });
-
-        // Toggle the clicked collapse
-        $(collapse).collapse('toggle');
-
-        // Trigger Vega-Lite view update if the collapse is now open
-        if (collapse.classList.contains('show')) {
-            // Find the Vega-Lite chart container inside the collapse
-            const vegaContainer = collapse.querySelector('.vis'); // Adjust the class to match your Vega-Lite chart container
-
-            if (vegaContainer) {
-                const vegaView = vega.container(vegaContainer).view; // Access the Vega-Lite view
-
-                // Resize the Vega-Lite view to fit the container
-                vegaView.resize();
-            }
-        }
-
-
-    });
 }
 
 
@@ -431,7 +393,7 @@ function drawChart(day,data) {
       }
     
     var destination = `#day${day}vis`
-    vegaEmbed(destination,visSpec, {actions: true})
+    vegaEmbed(destination,visSpec, {actions: false})
 }
 
 
