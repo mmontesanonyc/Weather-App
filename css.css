@@ -257,3 +257,7 @@ thead {
   line-height: 90%;
   white-space: nowrap;
 }
+
+.white {
+  background-color: white!important;
+}
