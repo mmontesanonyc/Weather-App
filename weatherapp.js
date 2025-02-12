@@ -254,10 +254,22 @@ function ingestHourlyData(x) {
 
         var dayChanceRain = x.forecast.forecastday[i].day.daily_chance_of_rain
         var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
-        var precip = dayChanceRain < dayChanceSnow ? 'snow' : 'rain'
+        
 
         var maxtemp = x.forecast.forecastday[i].day.maxtemp_f + 3
         var mintemp = x.forecast.forecastday[i].day.mintemp_f - 3
+
+        var precip;
+
+        if (dayChanceSnow > dayChanceRain || (dayChanceSnow > 0 && x.forecast.forecastday[i].day.maxtemp_f < 32)) {
+            precip = 'snow'
+        }  else {
+            precip = 'rain'
+        }
+
+        console.log(i, dayChanceRain, dayChanceSnow, x.forecast.forecastday[i].day.maxtemp_f)
+        console.log(i, precip)
+
 
         domain = [mintemp,maxtemp]
 
@@ -295,15 +307,23 @@ function ingestHourlyData(x) {
 
 function drawChart(day,data,precip,domain) {
     var mainPrecip      = precip
-    var secondPrecip    = precip === 'rain'? 'snow' : 'rain'
+    var secondPrecip;
+    if (precip === 'rain') {
+        secondPrecip = 'snow'
+    } else {
+        secondPrecip = 'rain'
+    }
 
     var mainVariable = 'chance_of_'+precip
     var secondVariable = 'chance_of_'+secondPrecip
 
+    var mainLabel = capitalizeFirstLetter(mainPrecip)
+    var secondLabel = capitalizeFirstLetter(secondPrecip)
+
     var mainDisplay =  {
         "width": "container",
         "height": 90,
-        "title": 'Precipitation: ' + mainPrecip,
+        "title": mainLabel,
         "mark": {
           "type": "area",
           "interpolate": "basis",
@@ -343,7 +363,7 @@ function drawChart(day,data,precip,domain) {
       var secondDisplay = {
         "width": "container",
         "height": 30,
-        "title": {"text": `Precipitation: ${secondPrecip}`, "align": "left", "dy": 10},
+        "title": {"text": secondLabel, "align": "left", "dy": 10},
         "mark": {
           "type": "text",
           "align": "center",
@@ -639,3 +659,8 @@ function formatHourFromEpoch(epoch) {
     return `${hours}${suffix}`;
 }
 
+
+function capitalizeFirstLetter(str) {
+    if (!str) return str; // Handle empty string
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
