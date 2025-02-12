@@ -185,7 +185,6 @@ function drawTableShells(x) {
     
         // Add the event listener
         row.addEventListener('click', () => {
-            console.log('row clicked!', targetId);
 
             const chartDivs = document.querySelectorAll('.dayContent')
             chartDivs.forEach(chart => {
@@ -257,7 +256,6 @@ function ingestHourlyData(x) {
         var dayChanceRain = x.forecast.forecastday[i].day.daily_chance_of_rain
         var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
         var precip = dayChanceRain < dayChanceSnow ? 'snow' : 'rain'
-        console.log(precip)
 
         // Loop through hours, extract values and put into data object
         for (let j = 0; j < x.forecast.forecastday[i].hour.length; j++) {
@@ -277,13 +275,10 @@ function ingestHourlyData(x) {
 
         }
 
-        // Get the element by its ID (or use a different selector)
+        // Width test, for some charting approaches
         var element = document.getElementById('day0vis');
-        
-        // Check if the element exists before trying to get its width
         if (element) {
-            var width = element.offsetWidth; // Gets the width of the element
-            // console.log('Element width:', width);
+            var width = element.offsetWidth;
         }
 
         // SEND DAY DATA TO CHARTING FUNCTION
@@ -293,13 +288,16 @@ function ingestHourlyData(x) {
 }
 
 function drawChart(day,data,precip) {
+    var mainPrecip      = precip
+    var secondPrecip    = precip === 'rain'? 'snow' : 'rain'
 
-    var precipVariable = 'chance_of_'+precip
+    var mainVariable = 'chance_of_'+precip
+    var secondVariable = 'chance_of_'+secondPrecip
 
-    var precipDisplay =  {
+    var mainDisplay =  {
         "width": "container",
-        "height": 100,
-        "title": 'Precipitation: ' + precip,
+        "height": 90,
+        "title": 'Precipitation: ' + mainPrecip,
         "mark": {
           "type": "area",
           "interpolate": "basis",
@@ -323,7 +321,7 @@ function drawChart(day,data,precip) {
             "axis": {"format": "%I%p"}
           },
           "y": {
-            "field": precipVariable,
+            "field": mainVariable,
             "type": "quantitative",
             "title": "",
             "scale": {"domain": [0, 100]},
@@ -332,6 +330,36 @@ function drawChart(day,data,precip) {
               "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
               "orient": "right"
             }
+          }
+        }
+      }
+
+      var secondDisplay = {
+        "width": "container",
+        "height": 30,
+        "title": {"text": `Precipitation: ${secondPrecip}`, "align": "left", "dy": 10},
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "baseline": "middle",
+          "fontSize": 6
+        },
+        "encoding": {
+          "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+          "text": {
+            "field": secondVariable,
+            "type": "quantitative",
+            "format": ".0f",
+            "condition": {
+              "test": `datum.${secondVariable} !== null`,
+              "value": {"expr": `datum.${secondVariable} + '%'`}
+            }
+          },
+          "opacity": {
+            "field": secondVariable,
+            "type": "quantitative",
+            "scale": {"domain": [0, 100]},
+            "legend": false
           }
         }
       }
@@ -351,7 +379,7 @@ function drawChart(day,data,precip) {
         "vconcat": [
             {
               "width": "container",
-              "height": 100,
+              "height": 90,
               "title": {"text": "Temperature", "dy": -19, "align": "left"},
               "mark": {"type": "point", "size": 150, "filled": true},
               "encoding": {
@@ -373,10 +401,11 @@ function drawChart(day,data,precip) {
                 "color": {"value": "coral"}
               }
             },
-            precipDisplay,
+            mainDisplay,
+            secondDisplay,
             {
               "width": "container",
-              "height": 100,
+              "height": 90,
               "title": "Cloud cover",
               "mark": {
                 "type": "area",
