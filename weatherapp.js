@@ -144,13 +144,13 @@ function drawTableShells(x) {
         let rowHTML = `
             <!-- DAY ${i} HEADER -->
             <div class="col-12">
-                <div class="row border-top py-2 dayHeader" id="${rowId}" data-target="${collapseId}">
-                    <div class="col-6">
+                <div class="row border-top py-2 dayHeader no-gutters" id="${rowId}" data-target="${collapseId}">
+                    <div class="col-3">
                         <span class="d-block"> 
                             <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
                             <span class="font-weight-bold" id="day${i}">Today</span>
                         </span>
-                        <span class="fs-xs" id="day${i}Condition">Condition</span>
+                        <p class="fs-xs" id="day${i}Condition">Condition</p>
                     </div>
                     <div class="col">
                             <div class="oval" id="day${i}Oval">

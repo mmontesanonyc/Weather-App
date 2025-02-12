@@ -254,4 +254,6 @@ thead {
 
 .fs-xs {
   font-size: 10px;
+  line-height: 90%;
+  white-space: nowrap;
 }
