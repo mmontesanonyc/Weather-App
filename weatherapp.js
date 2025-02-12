@@ -164,10 +164,8 @@ function drawTableShells(x) {
         let collapseHTML = `
             <!-- DAY ${i} COLLAPSE -->
             <div class="col-12">
-                <div class="collapse" id="${collapseId}">
-                    <div class="card card-body" >
+                <div class="dayContent show p-2" id="${collapseId}">
                     <div class="vis" id="day${i}vis">
-                    </div>
                 </div>
             </div>
         `;
@@ -299,63 +297,93 @@ function drawChart(day,data) {
         "data": {
           "values": data
         },
-          "config": {
-          "title": {
-            "anchor": "end",
-            "fontSize": 10 
-          },
-          "axisY": {
-            "tickCount": 3
-          },
-          "axisX": {
-            "grid": false,  
-            "tickCount": 5 
-          },
-          "view": {
-            "stroke": null
-          }
+        "width": "container",
+        "config": {
+          "title": {"anchor": "start", "fontSize": 10},
+          "axisY": {"tickCount": 2, "domain": false, "tickColor": "lightgray"},
+          "axisX": {"grid": false, "tickCount": 5, "domain": true},
+          "view": {"stroke": null}
         },
         "vconcat": [
           {
             "width": "container",
             "height": 100,
-            "title": "Temperature (°F)",
-            "mark": {
-              "type": "bar"
-            },
+            "title": {"text": "Temperature", "dy": -19, "align": "left"},
+            "mark": {"type": "point", "size": 150, "filled": true},
             "encoding": {
               "x": {
                 "field": "time",
                 "type": "temporal",
                 "title": "",
-                "axis": {"format": "%I%p"}
+                "axis": {
+                  "format": "%I%p"
+                },
+                
               },
-              "y": {"field": "temp_f", "type": "quantitative", "title": ""}
+              "y": {
+                "field": "temp_f",
+                "type": "quantitative",
+                "title": "",
+                "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"}
+              },
+              "color": {"value": "coral"}
             }
           },
           {
             "width": "container",
-            "height": 100,
-            "title": "Chance of rain",
+            "height": 30,
+            "title": {"text": "Rain", "dy": 10, "align": "left"},
             "mark": {
-              "type": "area"
+              "type": "text",
+              "align": "center",
+              "baseline": "middle",
+              "fontSize": 8
             },
             "encoding": {
-              "x": {
-                "field": "time",
-                "type": "temporal",
-                "title": "",
-                "axis": {"format": "%I%p"}
-              },
-              "y": {
+              "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+              "text": {
                 "field": "chance_of_rain",
                 "type": "quantitative",
-                "title": "",
-                "scale": {"domain": [1, 100]},
-                "axis": {
-                  "format": ".0f",
-                  "labelExpr": "datum.value + '%'"
+                "format": ".0f",
+                "condition": {
+                  "test": "datum.chance_of_rain !== null",
+                  "value": {"expr": "datum.chance_of_rain + '%'"}
                 }
+              },
+              "opacity": {
+                "field": "chance_of_rain",
+                "type": "quantitative",
+                "scale": {"domain": [0, 100]},
+                "legend": false
+              }
+            }
+          },
+          {
+            "width": "container",
+            "height": 30,
+            "title": {"text": "Snow", "align": "left", "dy": 10},
+            "mark": {
+              "type": "text",
+              "align": "center",
+              "baseline": "middle",
+              "fontSize": 8
+            },
+            "encoding": {
+              "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+              "text": {
+                "field": "chance_of_snow",
+                "type": "quantitative",
+                "format": ".0f",
+                "condition": {
+                  "test": "datum.chance_of_snow !== null",
+                  "value": {"expr": "datum.chance_of_snow + '%'"}
+                }
+              },
+              "opacity": {
+                "field": "chance_of_snow",
+                "type": "quantitative",
+                "scale": {"domain": [0, 100]},
+                "legend": false
               }
             }
           },
@@ -364,8 +392,19 @@ function drawChart(day,data) {
             "height": 100,
             "title": "Cloud cover",
             "mark": {
-              "type": "line",
-              "interpolate": "natural"
+              "type": "area",
+              "interpolate": "basis",
+              "color": {
+                "x1": 1,
+                "y1": 1,
+                "x2": 1,
+                "y2": 0,
+                "gradient": "linear",
+                "stops": [
+                  {"offset": 0, "color": "white"},
+                  {"offset": 1, "color": "darkgray"}
+                ]
+              }
             },
             "encoding": {
               "x": {
@@ -378,20 +417,25 @@ function drawChart(day,data) {
                 "field": "cloud",
                 "type": "quantitative",
                 "title": "",
-                "scale": {"domain": [1, 100]},
+                "scale": {"domain": [0, 100]},
                 "axis": {
                   "format": ".0f",
-                  "labelExpr": "datum.value + '%'"
+                  "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
+                  "orient": "right"
                 }
               }
             }
           }
-        ]
+        ],
+        "spacing": 20
       }
     
     var destination = `#day${day}vis`
-    vegaEmbed(destination,visSpec, {actions: false})
+    vegaEmbed(destination,visSpec, {actions: true})
 }
+
+
+
 
 
 

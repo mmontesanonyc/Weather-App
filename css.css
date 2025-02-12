@@ -244,17 +244,15 @@ thead {
 }
 
 .vis {
-  width:93%!important;
-  height: 500px;
+  min-width: 350px!important;
+  width:90%!important;
+  height: 450px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid lightgray;
 }
 
-.card {
+.dayContent {
   width: 100%!important;
-  padding: 10px 0px;
 }
 
-.card-body {
-  width: 100%!important;
-  padding: 10px 0px;
-
-}
