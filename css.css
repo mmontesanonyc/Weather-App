@@ -125,26 +125,31 @@ hr {
 
 
 .oval {
-  width: 100%;  /* Adjust as needed */
-  height: 30px;  /* Controls the oval shape */
+  width: 100%;  
+  height: 30px;
   border: 1px solid rgb(207, 185, 185);
-  border-radius: 25px; /* Half of height makes it oval */
+  border-radius: 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  font-size: 20px;
+  padding: 0 10px;
   font-weight: bold;
 }
 
 .left {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: bold;
+  text-align: left;
+}
+
+.tiny {
+  font-size: 0px;
 }
 
 .right {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: bold;
+  text-align: right;
 }
 
 .condition {
@@ -174,10 +179,6 @@ thead {
   flex-direction: column; /* Stack items vertically */
   align-items: center; /* Center items horizontally */
   justify-content: center; /* Center items vertically (optional) */
-}
-
-#iconPrint2, #textPrint {
-  margin: 0 5px; /* Optional for spacing */
 }
 
 .tempContainer {
@@ -237,3 +238,22 @@ thead {
   height: auto;
   white-space: nowrap; /* Ensures text doesn't wrap */
 }
+
+.vis-container {
+  min-width: 350px!important;
+  width:100%!important;
+  height: 450px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  padding: 5px;
+}
+
+.vis {
+  width:89%;
+}
+
+.dayContent {
+  width: 100%!important;
+}
+

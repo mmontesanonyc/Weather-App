@@ -23,10 +23,11 @@ function fetchZipCode(position) {
         .then(response => response.json())
         .then(data => {
             // Get the zip code from the response
+            console.log('***GETTING LOCATION FROM BROWSER')
             const zipCode = data.results[0]?.components?.postcode || "Zip code not found";
             console.log(`Your zip code is: ${zipCode}`);
             
-            fetchWeatherData(zipCode) // ADD IN FOR PUBLISHING
+            fetchWeatherData(zipCode) 
             // printStaticData(apiReturn)
         })
         .catch(error => {
@@ -83,24 +84,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // INITIALIZE API FETCH
 function fetchWeatherData(x) {
-    api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + '&days=3&aqi=yes&alerts=no'
+    api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + '&days=7&aqi=yes&alerts=no'
     fetch (api)
         .then(response => {return response.json()})
         .then(data => {
         apiData = data
-        console.log('***Loading weather data:')
+        console.log('***LOADING WEATHER DATA')
         console.log(apiData)
         printTodaySummary(apiData)
+        drawTableShells(apiData)
         printRangeHeaders(apiData)
-        drawHourlyValues(apiData)
+        // drawHourlyValues(apiData)
+        ingestHourlyData(apiData)
     })
-}
-
-function printStaticData(x) {
-    console.log('***Loading static data:')
-    printTodaySummary(x)
-    printRangeHeaders(x)
-    drawHourlyValues(x)
 }
 
 
@@ -135,53 +131,296 @@ function printTodaySummary(x) {
 
 }
 
-function printRangeHeaders(x) {
-    document.getElementById('day2').innerText = getDayOfWeek(x.forecast.forecastday[1].date)
-    document.getElementById('day3').innerText = getDayOfWeek(x.forecast.forecastday[2].date)
+function drawTableShells(x) {
+    console.log('***DRAWING TABLE SHELLS');
 
-    // LOWS AND HIGHS FOR NEXT 3 DAYS
-    var todayLow    = x.forecast.forecastday[0].day.mintemp_f
-    var todayHigh   = x.forecast.forecastday[0].day.maxtemp_f
-    var tomorrowLow = x.forecast.forecastday[1].day.mintemp_f
-    var tomorrowHigh= x.forecast.forecastday[1].day.maxtemp_f
-    var day3Low = x.forecast.forecastday[2].day.mintemp_f
-    var day3High= x.forecast.forecastday[2].day.maxtemp_f
+    var holder = document.getElementById('forecastHolder');
+    holder.innerHTML = ''; // Clear previous content
+
+    for (let i = 0; i < x.forecast.forecastday.length; i++) {
+        let rowId = `day${i}Row`;
+        let collapseId = `day${i}Collapse`;
+
+        let rowHTML = `
+            <!-- DAY ${i} HEADER -->
+            <div class="col-12">
+                <div class="row border-top py-2 dayHeader" id="${rowId}" data-target="${collapseId}">
+                    <div class="col-4">
+                        <span> 
+                            <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
+                            <span class="font-weight-bold" id="day${i}">Today</span>
+                        </span>
+                    </div>
+                    <div class="col">
+                            <div class="oval" id="day${i}Oval">
+                                <span class="left" id="day${i}Low">1</span>
+                                <span class="right" id="day${i}High">2</span>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        let collapseHTML = `
+            <!-- DAY ${i} COLLAPSE -->
+            <div class="col-12">
+                <div class="dayContent sr-only mb-4" id="${collapseId}">
+                    <div class="vis-container">
+                        <div class="vis" id="day${i}vis">Vis goes here</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Append new elements correctly
+        holder.insertAdjacentHTML('beforeend', rowHTML);
+        holder.insertAdjacentHTML('beforeend', collapseHTML);
+    }
+
+    const headerRows = document.querySelectorAll('.dayHeader');
+    headerRows.forEach(row => {
+        // Access the 'data-target' attribute
+        const targetId = row.dataset.target;
+    
+        // Add the event listener
+        row.addEventListener('click', () => {
+            console.log('row clicked!', targetId);
+
+            const chartDivs = document.querySelectorAll('.dayContent')
+            chartDivs.forEach(chart => {
+                chart.classList.add('sr-only')
+            })
+
+            const targetRow = document.getElementById(targetId);
+            if (targetRow) {
+                targetRow.classList.toggle('sr-only'); // Toggle the 'hide' class
+            }
+        });
+    });
+
+}
+
+
+function printRangeHeaders(x) {
 
     // GET RANGE, MIN, AND MAX
     var tempRange = [];
-    tempRange.push(todayLow,todayHigh,tomorrowLow,tomorrowHigh,day3Low,day3High)
+
+    for (let i = 0; i < x.forecast.forecastday.length; i++) {
+
+        if ( i > 0) {
+            document.getElementById(`day${i}`).innerText = getDayOfWeek(x.forecast.forecastday[i].date)
+        }
+
+        var low = x.forecast.forecastday[i].day.mintemp_f
+        var high = x.forecast.forecastday[i].day.maxtemp_f
+
+        tempRange.push(low,high)
+    }
+
+    // GET RANGE, MIN, AND MAX
     var min = Math.min(...tempRange)
-    var max = Math.max(...tempRange)
+    var max = Math.max(...tempRange) 
     var rangeValue = max-min
 
-    // SIZE EACH OVAL'S WIDTH AND LEFT MARGIN
-    document.getElementById('todayOval').style.width = (100 * (todayHigh - todayLow) / rangeValue) + '%'
-    document.getElementById('todayOval').style.marginLeft = (100 * (todayLow - min)/rangeValue) + '%'
 
-    document.getElementById('tomorrowOval').style.width = (100 * (tomorrowHigh - tomorrowLow) / rangeValue) + '%'
-    document.getElementById('tomorrowOval').style.marginLeft = (100 * (tomorrowLow - min)/rangeValue) + '%'
+    // LEWP AGAIN
+    for (let j = 0; j < x.forecast.forecastday.length; j++) {
+        var low = x.forecast.forecastday[j].day.mintemp_f
+        var high = x.forecast.forecastday[j].day.maxtemp_f
 
-    document.getElementById('day3Oval').style.width = (100 * ( day3High - day3Low) / rangeValue) + '%'
-    document.getElementById('day3Oval').style.marginLeft = (100 * (day3Low - min)/rangeValue) + '%'
+        let width = (100 * (high - low) / rangeValue)
 
-    // PRINT DAILY VALUES
-    drawDailyValues('today',todayLow,todayHigh)
-    drawDailyValues('tomorrow',tomorrowLow,tomorrowHigh)
-    drawDailyValues('day3',day3Low,day3High)
+        document.getElementById(`day${j}Oval`).style.width = width + '%'
+            if (width < 25) {
+                document.getElementById(`day${j}Low`).classList.add('tiny') // fallback for overlaps for small ranges
+            } else {}
 
-    // PRINT DAILY ICONS
-    document.getElementById('todayIcon').src = x.forecast.forecastday[0].day.condition.icon
-    document.getElementById('tomorrowIcon').src = x.forecast.forecastday[1].day.condition.icon
-    document.getElementById('day3Icon').src = x.forecast.forecastday[2].day.condition.icon
+        document.getElementById(`day${j}Oval`).style.marginLeft = (100 * (low - min) / rangeValue) + '%'
+        document.getElementById(`day${j}Low`).innerText = low + '°'
+        document.getElementById(`day${j}High`).innerText = high + '°'
+        document.getElementById(`day${j}Icon`).src = x.forecast.forecastday[j].day.condition.icon
+    }
 
 }
 
-function drawDailyValues(day,low,high) {
-    const lowID = day + 'Low'
-    const highID = day + 'High'
-    document.getElementById(lowID).innerText = low + '°'
-    document.getElementById(highID).innerText = high + '°'
+
+function ingestHourlyData(x) {
+    console.log('***ASSEMBLING HOURLY DATA')
+
+    // Loop through days
+    for (let i = 0; i < x.forecast.forecastday.length; i ++) {
+        var dayData = [];
+
+        // Loop through hours, extract values and put into data object
+        for (let j = 0; j < x.forecast.forecastday[i].hour.length; j++) {
+            let hour = x.forecast.forecastday[i].hour[j]
+            let dayObject = {
+                time: hour.time,
+                time_epoch: hour.time_epoch,
+                temp_f: hour.temp_f,
+                cloud: hour.cloud,
+                precip_in: hour.precip_in,
+                chance_of_rain: hour.chance_of_rain,
+                chance_of_snow: hour.chance_of_snow,
+                pm2_5: hour.pn2_5
+            }
+
+            dayData.push(dayObject);
+
+            // SEND DAY DATA TO CHARTING FUNCTION
+            drawChart(i,dayData)
+        }
+    }
 }
+
+function drawChart(day,data) {
+    var visSpec = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "data": {
+          "values": data
+        },
+        "width": "container",
+        "config": {
+          "title": {"anchor": "start", "fontSize": 10},
+          "axisY": {"tickCount": 2, "domain": false, "tickColor": "lightgray"},
+          "axisX": {"grid": false, "tickCount": 5, "domain": true},
+          "view": {"stroke": null}
+        },
+        "vconcat": [
+          {
+            "width": "container",
+            "height": 100,
+            "title": {"text": "Temperature", "dy": -19, "align": "left"},
+            "mark": {"type": "point", "size": 150, "filled": true},
+            "encoding": {
+              "x": {
+                "field": "time",
+                "type": "temporal",
+                "title": "",
+                "axis": {
+                  "format": "%I%p"
+                },
+                
+              },
+              "y": {
+                "field": "temp_f",
+                "type": "quantitative",
+                "title": "",
+                "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"}
+              },
+              "color": {"value": "coral"}
+            }
+          },
+          {
+            "width": "container",
+            "height": 30,
+            "title": {"text": "Rain", "dy": 10, "align": "left"},
+            "mark": {
+              "type": "text",
+              "align": "center",
+              "baseline": "middle",
+              "fontSize": 8
+            },
+            "encoding": {
+              "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+              "text": {
+                "field": "chance_of_rain",
+                "type": "quantitative",
+                "format": ".0f",
+                "condition": {
+                  "test": "datum.chance_of_rain !== null",
+                  "value": {"expr": "datum.chance_of_rain + '%'"}
+                }
+              },
+              "opacity": {
+                "field": "chance_of_rain",
+                "type": "quantitative",
+                "scale": {"domain": [0, 100]},
+                "legend": false
+              }
+            }
+          },
+          {
+            "width": "container",
+            "height": 30,
+            "title": {"text": "Snow", "align": "left", "dy": 10},
+            "mark": {
+              "type": "text",
+              "align": "center",
+              "baseline": "middle",
+              "fontSize": 8
+            },
+            "encoding": {
+              "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+              "text": {
+                "field": "chance_of_snow",
+                "type": "quantitative",
+                "format": ".0f",
+                "condition": {
+                  "test": "datum.chance_of_snow !== null",
+                  "value": {"expr": "datum.chance_of_snow + '%'"}
+                }
+              },
+              "opacity": {
+                "field": "chance_of_snow",
+                "type": "quantitative",
+                "scale": {"domain": [0, 100]},
+                "legend": false
+              }
+            }
+          },
+          {
+            "width": "container",
+            "height": 100,
+            "title": "Cloud cover",
+            "mark": {
+              "type": "area",
+              "interpolate": "basis",
+              "color": {
+                "x1": 1,
+                "y1": 1,
+                "x2": 1,
+                "y2": 0,
+                "gradient": "linear",
+                "stops": [
+                  {"offset": 0, "color": "white"},
+                  {"offset": 1, "color": "darkgray"}
+                ]
+              }
+            },
+            "encoding": {
+              "x": {
+                "field": "time",
+                "type": "temporal",
+                "title": "",
+                "axis": {"format": "%I%p"}
+              },
+              "y": {
+                "field": "cloud",
+                "type": "quantitative",
+                "title": "",
+                "scale": {"domain": [0, 100]},
+                "axis": {
+                  "format": ".0f",
+                  "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
+                  "orient": "right"
+                }
+              }
+            }
+          }
+        ],
+        "spacing": 20
+      }
+    
+    var destination = `#day${day}vis`
+    vegaEmbed(destination,visSpec, {actions: false})
+}
+
+
+
+
+
 
 function drawHourlyValues(x) {
     // Clear tables from any previous readout
@@ -309,13 +548,37 @@ function drawHourlyValues(x) {
     }
 }
 
+
+
+
+
 function getDayOfWeek(dateString) {
     // Parse the date manually to prevent timezone issues
     const [year, month, day] = dateString.split('-').map(Number);
     const date = new Date(Date.UTC(year, month - 1, day)); // Ensure UTC
 
+    let dayName = date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+
+    if (dayName === 'Monday') {
+        return 'Mon'
+    } else if (dayName === 'Tuesday') {
+        return 'Tues'
+    } else if (dayName === 'Wednesday') {
+        return 'Weds'
+    } else if (dayName === 'Thursday') {
+        return 'Thurs'
+    } else if (dayName === 'Friday') {
+        return 'Fri'
+    } else if (dayName === 'Saturday') {
+        return 'Sat'
+    } else if (dayName === 'Sunday') {
+        return 'Sun'
+    }
+
     // Get the full day name
     return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+
+
 }
 
 function formatHourFromEpoch(epoch) {

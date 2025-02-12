@@ -39,191 +39,57 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- TODAY'S SUMMARY -->
-                <div class="row resultsContainer hide">
-                    <div class="col-12">
-                        <hr class="no-mt">
-
-                        <div class="my-4" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                            <span class="locPrint">
-                                <span id='cityPrint'>CITY</span><span>,</span> 
-                                <span id='statePrint'>ST</span>
-                            </span>
-                        </div>
+                <div class="row resultsContainer hide text-center mt-4">
+                    <div class="col">
+                        <span class="locPrint">
+                            <span id='cityPrint'>CITY</span><span>,</span> 
+                            <span id='statePrint'>ST</span>
+                        </span>
+                    </div>
+                  </div>
 
 
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="tempContainer">
-                                        <span class="condition">Right now</span>
-                                        <span class="fs-lg"><span id="currentTempPrint">XX</span>°</span>
-                                    </div>
+                <div class="row text-center resultsContainer hide mb-4">
+                    <div class="col">
+                    <div class="d-inline-flex align-items-center justify-content-center">
+                        <img id="iconPrint2" style="height: 6rem; margin: 0 5px;">
+                        <span class="fs-lg">
+                        <span id="currentTempPrint">XX</span>°
+                        </span>
+                    </div>
+                    <div class="d-block mt-0 condition">
+                        <span id="textPrint" class="condition d-block p-1 mx-1">
+                            <!-- condition -->
+                        </span> 
+                        <span class="condition border p-1 mx-1">
+                            <i class="fas fa-cloud-showers-heavy"></i>
+                            <span id="rainChancePrint" class="font-weight-bold">XX</span>
+                        </span>
+                        <span class="condition border p-1 mx-1">
+                            <i class="fas fa-snowflake"></i>
+                            <span id="snowChancePrint"  class="font-weight-bold">XX</span>
+                        </span>
+                        <span class="condition border p-1 mx-1">
+                            AQI: <span id='aqiPrint' class="font-weight-bold">Z</span>
+                        </span>
 
-                                </div>
 
-                                <div class="col-3 border-left">
-                                    <div id="imgParent">
-                                        <span id="textPrint" class="condition"></span>
-                                        <img id="iconPrint2" style="height: 4rem; margin: 0 5px;">
-                                    </div>
-                                </div>
-
-                                <div class="col-5 border-left">
-                                    <div class="tempContainer">
-                                        <span class="condition text-align-center">Chance of precipitation</span>
-                                        
-                                        <span class="fs-sm">
-                                            Rain:   <span id="rainChancePrint" class="font-weight-bold">XX</span>
-                                        </span>
-
-                                        <span class="fs-sm">
-                                            Snow:   <span id="snowChancePrint"  class="font-weight-bold">XX</span>
-                                        </span>
-
-                                        <span class="mt-2 border-top fs-sm px-4">AQI: <span id='aqiPrint' class="font-weight-bold">Z</span>
-                                        
-                                    </div>
-
-                                </div>
-                            </div>
-
-                          <hr class="no-mt">
+                    </div>
                     </div>
                 </div>
-
+                
+            
                 <!-- FORECAST ACCORDIONS -->
-                <div class="row resultsContainer hide">
-                    <!-- TODAY HEADER -->
-                    <div class="col-12">
-                        <div class="row py-2" id="todayRow">
-                            <div class="col-4">
-                                <span> 
-                                    <img src="sampleimage.png" id='todayIcon' alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                                    <span class="font-weight-bold">Today</span>
-                                </span>
+                <div class="row resultsContainer hide" id="forecastHolder">
 
-                            </div>
-                            <div class="col">
-                                <div class="oval" id="todayOval">
-                                    <span class="left" id="todayLow">1</span>
-                                    <span class="right" id="todayHigh">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TODAY COLLAPSE -->
-                    <div class="col-12">
-                        <div class="collapse" id="todayCollapse">
-                            <div class="card card-body">
-                                <table>
-                                    <colgroup>
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="smallcaps fs-sm">
-                                            <th><i class="fas fa-clock"></i></th>
-                                            <th><i class="fas fa-cloud"></i></th>
-                                            <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                            <th><i class="fas fa-thermometer-quarter"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="todayTableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Repeat the structure for Tomorrow and Day 3 (No buttons) -->
-
-                    <div class="col-12">
-                        <div class="row py-2" id="tomorrowRow">
-                            <div class="col-4">
-                                <span> 
-                                    <img src="sampleimage.png" id='tomorrowIcon' alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                                    <span class="font-weight-bold" id="day2">Today</span>
-                                </span>
-                            </div>
-                            <div class="col">
-                                <div class="oval" id="tomorrowOval">
-                                    <span class="left" id="tomorrowLow">1</span>
-                                    <span class="right" id="tomorrowHigh">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="collapse" id="tomorrowCollapse">
-                            <div class="card card-body">
-                                <table>
-                                    <colgroup>
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="smallcaps fs-sm">
-                                            <th><i class="fas fa-clock"></i></th>
-                                            <th><i class="fas fa-cloud"></i></th>
-                                            <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                            <th><i class="fas fa-thermometer-quarter"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tomorrowTableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="row py-2" id="day3Row">
-                            <div class="col-4">
-                                <span> 
-                                    <img src="sampleimage.png" id='day3Icon' alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                                    <span class="font-weight-bold" id="day3">Next day</span>
-                                </span>
-                            </div>
-                            <div class="col">
-                                <div class="oval" id="day3Oval">
-                                    <span class="left" id="day3Low">1</span>
-                                    <span class="right" id="day3High">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="collapse" id="day3Collapse">
-                            <div class="card card-body">
-                                <table>
-                                    <colgroup>
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                        <col style="width:10%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="smallcaps fs-sm">
-                                            <th><i class="fas fa-clock"></i></th>
-                                            <th><i class="fas fa-cloud"></i></th>
-                                            <th><i class="fas fa-cloud-showers-heavy"></i></th>
-                                            <th><i class="fas fa-thermometer-quarter"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="day3TableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12">
                         <HR>
-                        <p>Thanks for using my weather app. This uses <a href="www.weatherapi">WeatherAPI</a> and simple JS + Bootstrap. If you like it, feel free to <a href="https://venmo.com/code?user_id=2293559168335872144&created=1739136186">Venmo me a few bucks</a>.</p>
+                        <p>Weather App uses <a href="www.weatherapi">WeatherAPI</a>. If you like Weather App, feel free to <a href="https://venmo.com/code?user_id=2293559168335872144&created=1739136186">Venmo me a few bucks</a>.</p>
                     </div>
                 </div>
             </div>
@@ -240,6 +106,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <!-- Vega-Lite -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
   
     <!-- static data for easier testing -->
     <script src="apitest.js"></script>
@@ -250,30 +121,7 @@
 
 
     <script> 
-// Function to handle row clicks and toggle collapse, ensuring only one is open at a time
-function addRowClickListener(rowId, collapseId) {
-    const row = document.getElementById(rowId);
-    const collapse = document.getElementById(collapseId);
-    
-    row.addEventListener('click', function () {
-        // Close all collapses
-        const allCollapses = document.querySelectorAll('.collapse');
-        allCollapses.forEach(function(c) {
-            // Collapse all open collapses except the one that is clicked
-            if (c !== collapse) {
-                $(c).collapse('hide');
-            }
-        });
 
-        // Toggle the clicked collapse (open it if closed, close it if open)
-        $(collapse).collapse('toggle');
-    });
-}
-
-// Add event listeners for each row
-addRowClickListener('todayRow', 'todayCollapse');
-addRowClickListener('tomorrowRow', 'tomorrowCollapse');
-addRowClickListener('day3Row', 'day3Collapse');
 
     </script>
 
