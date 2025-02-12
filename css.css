@@ -181,10 +181,6 @@ thead {
   justify-content: center; /* Center items vertically (optional) */
 }
 
-#iconPrint2, #textPrint {
-  margin: 0 5px; /* Optional for spacing */
-}
-
 .tempContainer {
   display: flex;
   flex-direction: column; /* Stack items vertically */
@@ -254,7 +250,7 @@ thead {
 }
 
 .vis {
-  width:90%;
+  width:89%;
 }
 
 .dayContent {

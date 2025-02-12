@@ -39,59 +39,48 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- TODAY'S SUMMARY -->
-                <div class="row resultsContainer hide">
-                    <div class="col-12">
-                        <hr class="no-mt">
-
-                        <div class="my-4" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                            <span class="locPrint">
-                                <span id='cityPrint'>CITY</span><span>,</span> 
-                                <span id='statePrint'>ST</span>
-                            </span>
-                        </div>
+                <div class="row resultsContainer hide text-center mt-4">
+                    <div class="col">
+                        <span class="locPrint">
+                            <span id='cityPrint'>CITY</span><span>,</span> 
+                            <span id='statePrint'>ST</span>
+                        </span>
+                    </div>
+                  </div>
 
 
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="tempContainer">
-                                        <span class="condition">Right now</span>
-                                        <span class="fs-lg"><span id="currentTempPrint">XX</span>°</span>
-                                    </div>
+                <div class="row text-center resultsContainer hide mb-4">
+                    <div class="col">
+                    <div class="d-inline-flex align-items-center justify-content-center">
+                        <img id="iconPrint2" style="height: 6rem; margin: 0 5px;">
+                        <span class="fs-lg">
+                        <span id="currentTempPrint">XX</span>°
+                        </span>
+                    </div>
+                    <div class="d-block mt-0 condition">
+                        <span id="textPrint" class="condition d-block p-1 mx-1">
+                            <!-- condition -->
+                        </span> 
+                        <span class="condition border p-1 mx-1">
+                            <i class="fas fa-cloud-showers-heavy"></i>
+                            <span id="rainChancePrint" class="font-weight-bold">XX</span>
+                        </span>
+                        <span class="condition border p-1 mx-1">
+                            <i class="fas fa-snowflake"></i>
+                            <span id="snowChancePrint"  class="font-weight-bold">XX</span>
+                        </span>
+                        <span class="condition border p-1 mx-1">
+                            AQI: <span id='aqiPrint' class="font-weight-bold">Z</span>
+                        </span>
 
-                                </div>
 
-                                <div class="col-3 border-left">
-                                    <div id="imgParent">
-                                        <span id="textPrint" class="condition"></span>
-                                        <img id="iconPrint2" style="height: 4rem; margin: 0 5px;">
-                                    </div>
-                                </div>
-
-                                <div class="col-5 border-left">
-                                    <div class="tempContainer">
-                                        <span class="condition text-align-center">Chance of precipitation</span>
-                                        
-                                        <span class="fs-sm">
-                                            Rain:   <span id="rainChancePrint" class="font-weight-bold">XX</span>
-                                        </span>
-
-                                        <span class="fs-sm">
-                                            Snow:   <span id="snowChancePrint"  class="font-weight-bold">XX</span>
-                                        </span>
-
-                                        <span class="mt-2 border-top fs-sm px-4">AQI: <span id='aqiPrint' class="font-weight-bold">Z</span>
-                                        
-                                    </div>
-
-                                </div>
-                            </div>
-
-                          <hr class="no-mt">
+                    </div>
                     </div>
                 </div>
-
+                
+            
                 <!-- FORECAST ACCORDIONS -->
                 <div class="row resultsContainer hide" id="forecastHolder">
 
@@ -120,8 +109,8 @@
 
     <!-- Vega-Lite -->
     <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
   
     <!-- static data for easier testing -->
     <script src="apitest.js"></script>

@@ -144,7 +144,7 @@ function drawTableShells(x) {
         let rowHTML = `
             <!-- DAY ${i} HEADER -->
             <div class="col-12">
-                <div class="row mt-4 py-2 toggle-row" id="${rowId}" data-collapse="${collapseId}">
+                <div class="row border-top py-2 dayHeader" id="${rowId}" data-target="${collapseId}">
                     <div class="col-4">
                         <span> 
                             <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
@@ -164,7 +164,7 @@ function drawTableShells(x) {
         let collapseHTML = `
             <!-- DAY ${i} COLLAPSE -->
             <div class="col-12">
-                <div class="dayContent show" id="${collapseId}">
+                <div class="dayContent sr-only mb-4" id="${collapseId}">
                     <div class="vis-container">
                         <div class="vis" id="day${i}vis">Vis goes here</div>
                     </div>
@@ -176,6 +176,27 @@ function drawTableShells(x) {
         holder.insertAdjacentHTML('beforeend', rowHTML);
         holder.insertAdjacentHTML('beforeend', collapseHTML);
     }
+
+    const headerRows = document.querySelectorAll('.dayHeader');
+    headerRows.forEach(row => {
+        // Access the 'data-target' attribute
+        const targetId = row.dataset.target;
+    
+        // Add the event listener
+        row.addEventListener('click', () => {
+            console.log('row clicked!', targetId);
+
+            const chartDivs = document.querySelectorAll('.dayContent')
+            chartDivs.forEach(chart => {
+                chart.classList.add('sr-only')
+            })
+
+            const targetRow = document.getElementById(targetId);
+            if (targetRow) {
+                targetRow.classList.toggle('sr-only'); // Toggle the 'hide' class
+            }
+        });
+    });
 
 }
 
