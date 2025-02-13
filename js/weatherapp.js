@@ -514,7 +514,7 @@ function drawChart(day,data,precip,domain) {
         },
         "config": {
           "title": {"anchor": "start", "fontSize": 10},
-          "axisY": {"tickCount": 3, "domain": true, "tickColor": "lightgray"},
+          "axisY": {"tickCount": 3, "domain": false, "tickColor": "lightgray"},
           "axisX": {"grid": false, "tickCount": 4, "domain": true},
           "view": {"stroke": null},
           "background": "transparent"
