@@ -8,6 +8,10 @@ h6 {
   font-weight: bold;
 }
 
+h1 {
+  font-size: calc(.5rem + 5vw);
+}
+
 p {
   font-family: Averta, sans-serif !important;
   font-size: 15px;

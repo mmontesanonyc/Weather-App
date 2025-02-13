@@ -74,31 +74,6 @@ function showError(error) {
 // Get the location when the page loads
 getLocation();
 
-// EVENT LISTENER ON ZIP SUBMISSION FORM
-document.addEventListener("DOMContentLoaded", function () {
-    const input = document.querySelector(".form-control");
-    const button = document.querySelector(".btn");
-
-    function handleSubmit() {
-        const value = input.value.trim();
-        console.log("Entered value:", value);
-        
-        if (/^\d{5}$/.test(value)) {
-            console.log("Valid 5-digit ZIP Code.");
-            fetchWeatherData(value)
-        } else {
-            console.log("Invalid ZIP Code. Please enter a 5-digit number.");
-        }
-    }
-
-    button.addEventListener("click", handleSubmit);
-    input.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            handleSubmit();
-        }
-    });
-});
 
 // INITIALIZE API FETCH
 function fetchWeatherData(x,y) {
@@ -663,4 +638,30 @@ function formatHourFromEpoch(epoch) {
 function capitalizeFirstLetter(str) {
     if (!str) return str; // Handle empty string
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+var units = 1
+function changeUnits(x) {
+  units = x 
+  // Remove 'active' class from all unit buttons
+  document.querySelectorAll('.unitBtn').forEach(btn => btn.classList.remove('active'));
+
+  // Add 'active' class to the clicked button
+  if (x === 0) {
+    document.getElementById('cbtn').classList.add('active');
+  } else {
+    document.getElementById('fbtn').classList.add('active');
+  }
+
+  // THEN, RE-PRINT INFORMATION WITH MULTIPLICATION APPLIES
+
+}
+
+function convertToC(x) {
+  if (units === 1) {
+    return x
+  } else if (units === 0) {
+    let convert = 5 * (x - 32)/9
+    return convert
+  }
 }

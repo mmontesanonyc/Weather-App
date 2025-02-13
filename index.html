@@ -38,23 +38,19 @@
 
         <div class="container-fluid" >
             <div class="col-12 px-0">
-                <div class="row" style="background-color:#0F0E0E;color:#FBF5F3">
-                    <div class="col-md-8 col-sm-12 mx-auto my-3">
-                        <h1 class=""><i class="fas fa-sun mr-1" aria-hidden="true"></i>Weather App</h1>
-    
+                <div class="row pt-3 pb-2" style="background-color:#0F0E0E;color:#FBF5F3">
+                    <div class="col-7 ">
+                        <h1 class="responsive-size"><i class="fas fa-sun mr-1" aria-hidden="true"></i>Weather App</h1>
+                    </div>
+
+                    <div class="col">
+                        <div class="btn-group float-right mt-2" role="group" aria-label="Basic radio toggle button group">
+                            <button class="btn btn-sm btn-outline-primary unitBtn" id="cbtn" onclick="changeUnits(0)">C</button>
+                            <button class="btn btn-sm btn-outline-primary active unitBtn" id="fbtn" onclick="changeUnits(1)">F</button>
+                          </div>
+                          
                     </div>
         
-                </div>
-
-                <div class="row d-none">
-                    <div class="col-12">
-                        <hr class="no-mt">
-                        
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Enter your ZIP Code" aria-label="Search">
-                            <button class="btn btn-primary" type="button">Search</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="row mt-4">
