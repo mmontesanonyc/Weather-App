@@ -17,6 +17,9 @@ For the daily forecast drop-downs, the page checks to see if there is a higher d
 ## Future Modifications
 I'm considering using the [weather.gov API](https://weather-gov.github.io/api/general-faqs), or the [Open-Meteo API](https://open-meteo.com/en/docs#current=is_day&hourly=temperature_2m,precipitation_probability,precipitation,cloud_cover), instead of the current one.
 
-I'll likely continue to revise the display and functionality, including [revising the day-forecast headers to something like this](https://gist.github.com/mmontesanonyc/ece8106f7a4a60621073a6ae0bd5fcee).
+I'll likely continue to revise the display and functionality. Right now, I'm thinking about:
+- Revising the day-header bar-charts to bias them toward the left if it's cold, and toward the right if they're not - while also making the color dependent on temps. 
+- Revising the geolocator so that it doesn't rely on a ZIP Code query. This is mostly about revising how I hit the weather API - using lat/long instead of ZIP. This will let people outside the USA use this. I may need to incorporate a Leaflet Geocoder for this. 
+- Considering adding a location cookie so it'll remember you. 
 
 If you seriously like this and would like me to develop it further, feel free to file an issue with any ideas, suggestions, or desires.
