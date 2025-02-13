@@ -1,5 +1,7 @@
 // ESTABLISH GLOBAL VARIABLES
 var apiData;
+var setLat;
+var setLong;
 
 // INITIALIZE LEAFLET MAP FOR GEOCODING
 const leafletMap = L.map('map').setView([0,0],11);
@@ -19,13 +21,18 @@ const geocoder = L.Control.geocoder({
 // Listen for the geocode result event
 geocoder.on('markgeocode', function (e) {
   console.log('****GEOCODING...')
+  console.log(e)
   const latlng = e.geocode.center;
   console.log(`Latitude: ${latlng.lat}, Longitude: ${latlng.lng}`);
+  setLat = latlng.lat;
+  setLong = latlng.lng;
 
   // Optionally, add a marker at the selected location
   L.marker(latlng).addTo(leafletMap)
-    .bindPopup(`Latitude: ${latlng.lat}<br>Longitude: ${latlng.lng}`)
+    .bindPopup(e.geocode.name)
     .openPopup();
+
+    leafletMap.setView([latlng.lat,latlng.lng],11)
 
     fetchWeatherData(latlng.lat,latlng.lng)
 
@@ -122,7 +129,7 @@ function printTodaySummary(x) {
 }
 
 function drawTableShells(x) {
-    console.log('***DRAWING TABLE SHELLS');
+    console.log('****DRAWING TABLE SHELLS');
 
     var holder = document.getElementById('forecastHolder');
     holder.innerHTML = ''; // Clear previous content
@@ -654,6 +661,7 @@ function changeUnits(x) {
   }
 
   // THEN, RE-PRINT INFORMATION WITH MULTIPLICATION APPLIES
+  fetchWeatherData(setLat,setLong)
 
 }
 
