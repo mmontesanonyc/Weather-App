@@ -594,7 +594,7 @@ function drawChart(day,data,precip,domain) {
       }
     
     var destination = `#day${day}vis`
-    vegaEmbed(destination,visSpec, {actions: true})
+    vegaEmbed(destination,visSpec, {actions: false})
 }
 
 function getDayOfWeek(dateString) {
