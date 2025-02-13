@@ -245,7 +245,7 @@ thead {
 
 .vis-container {
   width:100%!important;
-  height: 500px;
+  height: 520px;
 }
 
 .vis {
@@ -283,7 +283,7 @@ thead {
 /* Class to make it visible with animation */
 .dayContent.visible {
   opacity: 1;
-  max-height: 500px; /* Adjust based on expected content height */
+  max-height: 525px; /* Adjust based on expected content height */
 }
 
 .sr-only {

@@ -162,7 +162,7 @@ function drawTableShells(x) {
             <div class="col-12 px-2">
                 <div class="dayContent sr-only mb-4" id="${collapseId}">
                     <div class="vis-container">
-                        <div class="vis" id="day${i}vis">Vis goes here</div>
+                        <div class="vis pr-3" id="day${i}vis">Vis goes here</div>
                     </div>
                 </div>
             </div>
@@ -460,7 +460,8 @@ function drawChart(day,data,precip,domain) {
             "field": "time",
             "type": "temporal",
             "title": "",
-            "axis": {"format": "%I%p"}
+            "axis": {"format": "%I%p"},
+            "scale": {"padding": 20}
           },
           "y": {
             "field": mainVariable,
@@ -470,7 +471,7 @@ function drawChart(day,data,precip,domain) {
             "axis": {
               "format": ".0f",
               "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
-              "orient": "right"
+              "orient": "left"
             }
           }
         }
@@ -487,7 +488,7 @@ function drawChart(day,data,precip,domain) {
           "fontSize": 6
         },
         "encoding": {
-          "x": {"field": "time", "type": "temporal", "title": "", "axis": null},
+          "x": {"field": "time", "type": "temporal", "title": "", "axis": null,"scale": {"padding": 20}},
           "text": {
             "field": secondVariable,
             "type": "quantitative",
@@ -522,7 +523,7 @@ function drawChart(day,data,precip,domain) {
             {
               "width": "container",
               "height": 90,
-              "title": {"text": "Temperature", "dy": -19, "align": "left"},
+              "title": {"text": "Temperature", "align": "left"},
               "mark": {"type": "point", "size": 150, "filled": true},
               "encoding": {
                 "x": {
@@ -532,13 +533,13 @@ function drawChart(day,data,precip,domain) {
                   "axis": {
                     "format": "%I%p"
                   },
-                  
+                  "scale": {"padding": 20}
                 },
                 "y": {
                   "field": "temp_f",
                   "type": "quantitative",
                   "title": "",
-                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "right"},
+                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "left"},
                   "scale": {
                     "domain": domain
                   }
@@ -572,7 +573,8 @@ function drawChart(day,data,precip,domain) {
                   "field": "time",
                   "type": "temporal",
                   "title": "",
-                  "axis": {"format": "%I%p"}
+                  "axis": {"format": "%I%p"},
+                  "scale": {"padding": 20}
                 },
                 "y": {
                   "field": "cloud",
@@ -582,7 +584,7 @@ function drawChart(day,data,precip,domain) {
                   "axis": {
                     "format": ".0f",
                     "labelExpr": "datum.value === 0 ? '' : datum.value + '%'",
-                    "orient": "right"
+                    "orient": "left"
                   }
                 }
               }
@@ -592,7 +594,7 @@ function drawChart(day,data,precip,domain) {
       }
     
     var destination = `#day${day}vis`
-    vegaEmbed(destination,visSpec, {actions: false})
+    vegaEmbed(destination,visSpec, {actions: true})
 }
 
 
