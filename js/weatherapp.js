@@ -264,7 +264,7 @@ function printRangeHeaders(x) {
             day: `day${j}`
         }
 
-        console.log(j, dataObject)
+        // console.log(j, dataObject)
 
         // send dataObject to dayRangeChart
         drawDayRangeChart(j,dataObject,sevenDayRange)
@@ -277,7 +277,7 @@ function printRangeHeaders(x) {
 function drawDayRangeChart(day,data,range) {
 
     var destination = '#day'+day+'Dot'
-    console.log(destination)
+    // console.log(destination)
     //console.log(document.getElementById(destination))
 
     var spec = {
