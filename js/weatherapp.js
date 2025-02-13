@@ -93,8 +93,6 @@ function fetchWeatherData(x) {
         console.log(apiData)
         printTodaySummary(apiData)
         drawTableShells(apiData)
-        printRangeHeaders(apiData)
-        // drawHourlyValues(apiData)
         ingestHourlyData(apiData)
     })
 }
@@ -144,7 +142,7 @@ function drawTableShells(x) {
         let rowHTML = `
             <!-- DAY ${i} HEADER -->
             <div class="col-12">
-                <div class="row border-top py-2 dayHeader no-gutters" id="${rowId}" data-target="${collapseId}">
+                <div class="row py-2 dayHeader no-gutters" id="${rowId}" data-target="${collapseId}">
                     <div class="col-3">
                         <span class="d-block"> 
                             <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
@@ -152,11 +150,8 @@ function drawTableShells(x) {
                         </span>
                         <p class="fs-xs" id="day${i}Condition">Condition</p>
                     </div>
-                    <div class="col">
-                            <div class="oval" id="day${i}Oval">
-                                <span class="left" id="day${i}Low">1</span>
-                                <span class="right" id="day${i}High">2</span>
-                            </div>
+                    <div class="col-9">
+                            <div class="dotVis" id="day${i}Dot"></div>
                     </div>
                 </div>
             </div>
@@ -178,70 +173,191 @@ function drawTableShells(x) {
         holder.insertAdjacentHTML('beforeend', collapseHTML);
     }
 
+    // ADD EVENT LISTENERS TO HEADER ROWS FOR MANUAL SHOW/HIDE/ANIMATE
     const headerRows = document.querySelectorAll('.dayHeader');
+
     headerRows.forEach(row => {
-        // Access the 'data-target' attribute
         const targetId = row.dataset.target;
     
-        // Add the event listener
         row.addEventListener('click', () => {
-
-            const chartDivs = document.querySelectorAll('.dayContent')
-            chartDivs.forEach(chart => {
-                chart.classList.add('sr-only')
-            })
-
             const targetRow = document.getElementById(targetId);
-            if (targetRow) {
-                targetRow.classList.toggle('sr-only'); // Toggle the class
+            if (!targetRow) return;
+    
+            // If the target row is already visible, animate hiding it
+            if (targetRow.classList.contains('visible')) {
+                targetRow.classList.remove('visible');
+    
+                // Wait for animation to complete, then add sr-only
+                setTimeout(() => {
+                    targetRow.classList.add('sr-only');
+                }, 300); // Matches CSS transition duration
+                return;
             }
+    
+            // Hide all other rows before opening a new one
+            document.querySelectorAll('.dayContent').forEach(chart => {
+                if (chart !== targetRow) {
+                    chart.classList.remove('visible');
+                    setTimeout(() => {
+                        chart.classList.add('sr-only');
+                    }, 300);
+                }
+            });
+    
+            // Show the clicked row
+            targetRow.classList.remove('sr-only');
+            setTimeout(() => {
+                targetRow.classList.add('visible');
+            }, 10); // Small delay to allow browser to register the class change
         });
     });
+    
+    
 
+    printRangeHeaders(x)
 }
 
 
 function printRangeHeaders(x) {
     // GET RANGE, MIN, AND MAX
-    var tempRange = [];
+    var sevenDayTemps = [];
 
+    // Loop through days
     for (let i = 0; i < x.forecast.forecastday.length; i++) {
-
+        // Print day headers
+        document.getElementById(`day${i}Icon`).src = x.forecast.forecastday[i].day.condition.icon
+        document.getElementById(`day${i}Condition`).innerText = x.forecast.forecastday[i].day.condition.text
         if ( i > 0) {
             document.getElementById(`day${i}`).innerText = getDayOfWeek(x.forecast.forecastday[i].date)
         }
-
+        // Get daily highs and lows
         var low = x.forecast.forecastday[i].day.mintemp_f
         var high = x.forecast.forecastday[i].day.maxtemp_f
-
-        tempRange.push(low,high)
+        // And push to array
+        sevenDayTemps.push(low,high)
     }
 
     // GET RANGE, MIN, AND MAX
-    var min = Math.min(...tempRange)
-    var max = Math.max(...tempRange) 
-    var rangeValue = max-min
+    var sevenDayMin = Math.min(...sevenDayTemps)
+    var sevenDayMax = Math.max(...sevenDayTemps) 
+    var sevenDayRange = [sevenDayMin, sevenDayMax]
 
 
-    // LEWP AGAIN
+    // LOOP THROUGH DAYS, CREATE LITTLE CHART
     for (let j = 0; j < x.forecast.forecastday.length; j++) {
-        var low = x.forecast.forecastday[j].day.mintemp_f
-        var high = x.forecast.forecastday[j].day.maxtemp_f
+        var todayLow = x.forecast.forecastday[j].day.mintemp_f
+        var todayHigh = x.forecast.forecastday[j].day.maxtemp_f
 
-        let width = (100 * (high - low) / rangeValue)
+        // create data json
 
-        document.getElementById(`day${j}Oval`).style.width = width + '%'
-            if (width < 25) {
-                document.getElementById(`day${j}Low`).classList.add('tiny') // fallback for overlaps for small ranges
-            } else {}
+        let dataObject = []
 
-        document.getElementById(`day${j}Oval`).style.marginLeft = (100 * (low - min) / rangeValue) + '%'
-        document.getElementById(`day${j}Low`).innerText = low + '°'
-        document.getElementById(`day${j}High`).innerText = high + '°'
-        document.getElementById(`day${j}Icon`).src = x.forecast.forecastday[j].day.condition.icon
-        document.getElementById(`day${j}Condition`).innerText = x.forecast.forecastday[j].day.condition.text
+        dataObject[0] = {
+            end: "Low",
+            temp: todayLow,
+            day: `day${j}`
+        }
+
+        dataObject[1] = {
+            end: "High",
+            temp: todayHigh,
+            day: `day${j}`
+        }
+
+        console.log(j, dataObject)
+
+        // send dataObject to dayRangeChart
+        drawDayRangeChart(j,dataObject,sevenDayRange)
+
     }
 
+}
+
+
+function drawDayRangeChart(day,data,range) {
+
+    var destination = '#day'+day+'Dot'
+    console.log(destination)
+    //console.log(document.getElementById(destination))
+
+    var spec = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "description": "Ranged dot plot",
+        "config": {
+          "background": "transparent",
+          "view": {
+            "stroke": null
+          }
+        },
+        "width": "container",
+        "height": 50,
+        "data": {
+          "values": data
+        },
+        "encoding": {
+          "x": {
+            "field": "temp",
+            "type": "quantitative",
+            "title": "",
+            "scale": {"domain": range},
+            "axis": {"grid": false, "domain": false, "labels": false, "ticks": false}
+          },
+          "y": {
+            "field": "day",
+            "type": "nominal",
+            "title": "",
+            "axis": {
+              "offset": 5,
+              "ticks": false,
+              "minExtent": 70,
+              "domain": false,
+              "labels": false
+            },
+            "scale": {"padding": 5}
+          }
+        },
+        "layer": [
+          {
+            "mark": "line",
+            "encoding": {
+              "detail": {"field": "day", "type": "nominal"},
+              "color": {"value": "lightgray"},
+              "strokeWidth": {"value": 20}
+            }
+          },
+          {
+            "mark": {"type": "point", "filled": true},
+            "encoding": {
+              "x": {"field": "temp", "type": "quantitative"},
+              "color": {
+                "field": "end",
+                "type": "nominal",
+                "scale": {"domain": ["Low", "High"], "range": ["#e6959c", "#911a24"]},
+                "legend": null
+              },
+              "size": {"value": 750},
+              "opacity": {"value": 1}
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "dx": 0,
+              "align": "center",
+              "fontSize": 10,
+              "fontWeight": "bold"
+            },
+            "encoding": {
+              "x": {"field": "temp", "type": "quantitative"},
+              "text": {"field": "temp", "type": "quantitative", "format": ".1f"},
+              "color": {"value": "white"}
+            }
+          }
+        ]
+      }
+
+
+    vegaEmbed(destination,spec, {actions: false})
 }
 
 
@@ -267,8 +383,8 @@ function ingestHourlyData(x) {
             precip = 'rain'
         }
 
-        console.log(i, dayChanceRain, dayChanceSnow, x.forecast.forecastday[i].day.maxtemp_f)
-        console.log(i, precip)
+        // console.log(i, dayChanceRain, dayChanceSnow, x.forecast.forecastday[i].day.maxtemp_f)
+        // console.log(i, precip)
 
 
         domain = [mintemp,maxtemp]

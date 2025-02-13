@@ -110,7 +110,7 @@ hr {
 }
 
 .fs-lg {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: bold;
 }
 
@@ -154,6 +154,10 @@ hr {
 
 .condition {
   font-size: 12px;
+}
+
+.summary-info {
+  font-size: 14px;
 }
 
 thead {
@@ -248,10 +252,6 @@ thead {
   width:89%;
 }
 
-.dayContent {
-  width: 100%!important;
-}
-
 .fs-xs {
   font-size: 10px;
   line-height: 90%;
@@ -260,4 +260,40 @@ thead {
 
 .white {
   background-color: white!important;
+}
+
+.dotVis {
+  height: 100%;
+  width: 100%;
+}
+
+.dayHeader {
+  border-top: 2px solid maroon;
+}
+
+
+.dayContent {
+  width: 100%!important;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+/* Class to make it visible with animation */
+.dayContent.visible {
+  opacity: 1;
+  max-height: 500px; /* Adjust based on expected content height */
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
