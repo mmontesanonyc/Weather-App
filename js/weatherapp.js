@@ -1,38 +1,56 @@
 // ESTABLISH GLOBAL VARIABLES
 var apiData;
 
+// INITIALIZE LEAFLET MAP FOR GEOCODING
+const leafletMap = L.map('map').setView([0,0],11);
+
+// Add  tiles
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 15,
+  minZoom: 11
+}).addTo(leafletMap);
+
+const geocoder = L.Control.geocoder({
+  defaultMarkGeocode: false // Prevent automatic marker placement
+}).addTo(leafletMap);
+
+// Listen for the geocode result event
+geocoder.on('markgeocode', function (e) {
+  console.log('****GEOCODING...')
+  const latlng = e.geocode.center;
+  console.log(`Latitude: ${latlng.lat}, Longitude: ${latlng.lng}`);
+
+  // Optionally, add a marker at the selected location
+  L.marker(latlng).addTo(leafletMap)
+    .bindPopup(`Latitude: ${latlng.lat}<br>Longitude: ${latlng.lng}`)
+    .openPopup();
+
+    fetchWeatherData(latlng.lat,latlng.lng)
+
+});
+
+
 // USE BROWSER GEOCODER TO GET ZIP
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(fetchZipCode, showError);
+        navigator.geolocation.getCurrentPosition(fetchLoc, showError);
     } else {
         console.log("Geolocation is not supported by this browser.");
     }
 }
 
 // Function to handle successful location retrieval
-function fetchZipCode(position) {
+function fetchLoc(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
 
-    // OpenCage Geocoding API endpoint (Replace YOUR_API_KEY with your key)
-    const apiKey = '6e21ba74db3a4838a528707bd39bc7a4'; 
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
+    fetchWeatherData(latitude,longitude)
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            // Get the zip code from the response
-            console.log('***GETTING LOCATION FROM BROWSER')
-            const zipCode = data.results[0]?.components?.postcode || "Zip code not found";
-            console.log(`Your zip code is: ${zipCode}`);
-            
-            fetchWeatherData(zipCode) 
-            // printStaticData(apiReturn)
-        })
-        .catch(error => {
-            console.log("Error fetching zip code.");
-        });
+    leafletMap.setView([latitude,longitude], 11);
+
+
 }
 
 // Function to handle error in getting location
@@ -83,20 +101,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // INITIALIZE API FETCH
-function fetchWeatherData(x) {
-    api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + '&days=7&aqi=yes&alerts=no'
-    fetch (api)
-        .then(response => {return response.json()})
-        .then(data => {
-        apiData = data
-        console.log('***LOADING WEATHER DATA')
-        console.log(apiData)
-        printTodaySummary(apiData)
-        drawTableShells(apiData)
-        ingestHourlyData(apiData)
-    })
+function fetchWeatherData(x,y) {
+  api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + ',' + y + '&days=7&aqi=yes&alerts=no'
+  fetch (api)
+      .then(response => {return response.json()})
+      .then(data => {
+      apiData = data
+      console.log('***LOADING WEATHER DATA')
+      console.log(apiData)
+      printTodaySummary(apiData)
+      drawTableShells(apiData)
+      ingestHourlyData(apiData)
+  })
 }
-
 
 function printTodaySummary(x) {
     // Show results containers
