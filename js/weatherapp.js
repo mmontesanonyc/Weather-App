@@ -76,9 +76,7 @@ function fetchLoc(position) {
       // .bindPopup(data[0].display_name)
       // .openPopup();
 
-
     leafletMap.setView([latitude,longitude], 14);
-
 
 }
 
