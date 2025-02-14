@@ -503,7 +503,7 @@ function drawChart(day,data,precip,domain) {
       var secondDisplay = {
         "width": "container",
         "height": 30,
-        "title": {"text": secondLabel, "align": "left", "dx": -32, "dy": 10},
+        "title": {"text": secondLabel, "align": "left", "dx": -32, "dy": 23},
         "mark": {
           "type": "text",
           "align": "center",
