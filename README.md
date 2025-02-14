@@ -14,6 +14,7 @@ I'm considering using the [weather.gov API](https://weather-gov.github.io/api/ge
 
 I'll likely continue to revise the display and functionality. Right now, I'm thinking about:
 - Revising the day-header bar-charts to bias them toward the left if it's cold, and toward the right if they're not - while also making the color dependent on temps. 
+- Adding some more daily forecast info (like precip amount to a row upon dropdown, above the charts)
 - Considering adding a location cookie so it'll remember you. 
 
 If you seriously like this and would like me to develop it further, feel free to file an issue with any ideas, suggestions, or desires.
