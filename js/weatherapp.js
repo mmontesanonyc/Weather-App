@@ -67,6 +67,8 @@ function getLocation() {
 function fetchLoc(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
+    setLat = latitude
+    setLong = longitude
 
     fetchWeatherData(latitude,longitude)
 
@@ -108,12 +110,12 @@ function fetchWeatherData(x,y) {
   fetch (api)
       .then(response => {return response.json()})
       .then(data => {
-      apiData = data
-      console.log('***LOADING WEATHER DATA')
-      console.log(apiData)
-      printTodaySummary(apiData)
-      drawTableShells(apiData)
-      ingestHourlyData(apiData)
+        apiData = data
+        console.log('***LOADING WEATHER DATA')
+        console.log(apiData)
+        printTodaySummary(apiData)
+        drawTableShells(apiData)
+        ingestHourlyData(apiData)
   })
 }
 
@@ -127,7 +129,7 @@ function printTodaySummary(x) {
     document.getElementById('statePrint').innerText = x.location.region
 
     // Current
-    document.getElementById('currentTempPrint').innerText = x.current.temp_f
+    document.getElementById('currentTempPrint').innerText = setUnits(x.current.temp_f)
     document.getElementById('textPrint').innerText = x.current.condition.text
 
     // Icon
@@ -685,11 +687,12 @@ function changeUnits(x) {
 
 }
 
-function convertToC(x) {
+// SET UNITS RUNS ON ALL NUMERIC ASSIGNMENTS; IT'LL KEEP AS F IF F IS SELECTED AS UNITS, OR CONVERT TO C
+function setUnits(x) {
   if (units === 1) {
     return x
   } else if (units === 0) {
     let convert = 5 * (x - 32)/9
-    return convert
+    return convert.toFixed(1)
   }
 }
