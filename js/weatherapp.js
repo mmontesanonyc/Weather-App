@@ -111,7 +111,7 @@ function fetchWeatherData(x,y) {
       .then(response => {return response.json()})
       .then(data => {
         apiData = data
-        console.log('***LOADING WEATHER DATA')
+        console.log('****LOADING WEATHER DATA')
         console.log(apiData)
         printTodaySummary(apiData)
         drawTableShells(apiData)
@@ -664,8 +664,10 @@ function changeUnits(x) {
   // Add 'active' class to the clicked button
   if (x === 0) {
     document.getElementById('cbtn').classList.add('active');
+    console.log('****UNITS SET: Celsius')
   } else {
     document.getElementById('fbtn').classList.add('active');
+    console.log('****UNITS SET: Fahrenheit')
   }
 
   // THEN, RE-PRINT INFORMATION WITH MULTIPLICATION APPLIES
@@ -682,3 +684,5 @@ function setUnits(x) {
     return convert.toFixed(1)
   }
 }
+
+console.log('****UNITS SET: Fahrenheit')
