@@ -647,23 +647,6 @@ function getDayOfWeek(dateString) {
 
 }
 
-function formatHourFromEpoch(epoch) {
-    // Ensure epoch is in milliseconds
-    if (epoch < 10000000000) {
-        epoch *= 1000; // Convert seconds to milliseconds
-    }
-
-    const date = new Date(epoch);
-    let hours = date.getHours();
-    const suffix = hours >= 12 ? 'pm' : 'am';
-
-    // Convert 24-hour time to 12-hour format
-    hours = hours % 12 || 12;
-
-    return `${hours}${suffix}`;
-}
-
-
 function capitalizeFirstLetter(str) {
     if (!str) return str; // Handle empty string
     return str.charAt(0).toUpperCase() + str.slice(1);
