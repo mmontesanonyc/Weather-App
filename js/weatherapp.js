@@ -252,8 +252,8 @@ function printRangeHeaders(x) {
             document.getElementById(`day${i}`).innerText = getDayOfWeek(x.forecast.forecastday[i].date)
         }
         // Get daily highs and lows
-        var low = x.forecast.forecastday[i].day.mintemp_f
-        var high = x.forecast.forecastday[i].day.maxtemp_f
+        var low = setUnits(x.forecast.forecastday[i].day.mintemp_f)
+        var high = setUnits(x.forecast.forecastday[i].day.maxtemp_f)
         // And push to array
         sevenDayTemps.push(low,high)
     }
@@ -266,8 +266,8 @@ function printRangeHeaders(x) {
 
     // LOOP THROUGH DAYS, CREATE LITTLE CHART
     for (let j = 0; j < x.forecast.forecastday.length; j++) {
-        var todayLow = x.forecast.forecastday[j].day.mintemp_f
-        var todayHigh = x.forecast.forecastday[j].day.maxtemp_f
+        var todayLow = setUnits(x.forecast.forecastday[j].day.mintemp_f)
+        var todayHigh = setUnits(x.forecast.forecastday[j].day.maxtemp_f)
 
         // create data json
 
@@ -393,8 +393,8 @@ function ingestHourlyData(x) {
         var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
         
 
-        var maxtemp = x.forecast.forecastday[i].day.maxtemp_f + 3
-        var mintemp = x.forecast.forecastday[i].day.mintemp_f - 3
+        var maxtemp = setUnits(x.forecast.forecastday[i].day.maxtemp_f + 3)
+        var mintemp = setUnits(x.forecast.forecastday[i].day.mintemp_f - 3)
 
         var precip;
 
@@ -418,7 +418,7 @@ function ingestHourlyData(x) {
             let dayObject = {
                 time: hour.time,
                 time_epoch: hour.time_epoch,
-                temp_f: hour.temp_f,
+                temp_f: setUnits(hour.temp_f),
                 cloud: hour.cloud,
                 precip_in: hour.precip_in,
                 chance_of_rain: hour.chance_of_rain,
@@ -456,6 +456,8 @@ function drawChart(day,data,precip,domain) {
 
     var mainLabel = capitalizeFirstLetter(mainPrecip)
     var secondLabel = capitalizeFirstLetter(secondPrecip)
+
+    var unitPrint = (units === 1) ? '°F' : '°C'
 
     var mainDisplay =  {
         "width": "container",
@@ -560,7 +562,7 @@ function drawChart(day,data,precip,domain) {
                   "field": "temp_f",
                   "type": "quantitative",
                   "title": "",
-                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "left"},
+                  "axis": {"labelExpr": `datum.value + '${unitPrint}'`, "orient": "left"},
                   "scale": {
                     "domain": domain
                   }
@@ -652,7 +654,8 @@ function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-var units = 1
+
+var units = 1 // 1 = F, 0 = C
 function changeUnits(x) {
   units = x 
   // Remove 'active' class from all unit buttons
