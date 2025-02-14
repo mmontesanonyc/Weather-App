@@ -55,7 +55,14 @@
 
                 <div class="row mt-4">
                     <div class="col-md-8 mx-auto">
-                        <p class="fs-sm float-right">Enter a place name or postal code - or, let your web browser provide its location.</p>
+                        <form id="geocode-form" class="form-inline d-block">
+                            <div class="input-group">
+                                <input type="text" id="address-input" class="form-control" placeholder="Enter an address">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div class="col-md-8 mx-auto col-sm-12">
                         <div id="map" class="border" style="width:100%; height: 300px;">map</div>

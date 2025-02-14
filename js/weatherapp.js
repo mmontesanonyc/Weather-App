@@ -3,8 +3,47 @@ var apiData;
 var setLat;
 var setLong;
 
+// FORM SUBMIT: GEOCODE
+document.getElementById("geocode-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  var address = document.getElementById("address-input").value;
+  if (!address) return;
+
+  // Use Nominatim API directly
+  var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+  fetch(url)
+      .then(response => response.json())
+      .then(data => {
+          if (data.length > 0) {
+              var lat = data[0].lat;
+              var lon = data[0].lon;
+              console.log("Coordinates:", lat, lon);
+
+              // Move the map and add a marker
+              var latlng = [lat, lon];
+              leafletMap.setView(latlng, 14);
+              L.marker(latlng).addTo(leafletMap).bindPopup(data[0].display_name).openPopup();
+
+              // Display result
+              console.log(`Coordinates: ${lat}, ${lon}`);
+
+              // send Lat and Long to data retrieval
+              setLat = lat
+              setLong = lon
+              fetchWeatherData(setLat,setLong)
+
+          } else {
+              alert("Location not found!");
+          }
+      })
+      .catch(error => console.error("Geocoding error:", error));
+});
+
+
 // INITIALIZE LEAFLET MAP FOR GEOCODING
-const leafletMap = L.map('map').setView([0,0],11);
+const leafletMap = L.map('map').setView([40.654361,-73.966668],11);
 
 // Add  tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -13,30 +52,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
   maxZoom: 15,
   minZoom: 11
 }).addTo(leafletMap);
-
-const geocoder = L.Control.geocoder({
-  defaultMarkGeocode: false // Prevent automatic marker placement
-}).addTo(leafletMap);
-
-// Listen for the geocode result event
-geocoder.on('markgeocode', function (e) {
-  console.log('****GEOCODING...')
-  console.log(e)
-  const latlng = e.geocode.center;
-  console.log(`Latitude: ${latlng.lat}, Longitude: ${latlng.lng}`);
-  setLat = latlng.lat;
-  setLong = latlng.lng;
-
-  // Optionally, add a marker at the selected location
-  L.marker(latlng).addTo(leafletMap)
-    .bindPopup(e.geocode.name)
-    .openPopup();
-
-    leafletMap.setView([latlng.lat,latlng.lng],11)
-
-    fetchWeatherData(latlng.lat,latlng.lng)
-
-});
 
 
 // USE BROWSER GEOCODER TO GET ZIP
@@ -55,7 +70,14 @@ function fetchLoc(position) {
 
     fetchWeatherData(latitude,longitude)
 
-    leafletMap.setView([latitude,longitude], 11);
+    var latlng = [latitude, longitude];
+    leafletMap.setView(latlng, 14);
+    L.marker(latlng).addTo(leafletMap)
+      // .bindPopup(data[0].display_name)
+      // .openPopup();
+
+
+    leafletMap.setView([latitude,longitude], 14);
 
 
 }
