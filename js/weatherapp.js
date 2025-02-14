@@ -370,7 +370,7 @@ function drawDayRangeChart(day,data,range) {
             },
             "encoding": {
               "x": {"field": "temp", "type": "quantitative"},
-              "text": {"field": "temp", "type": "quantitative", "format": ".1f"},
+              "text": {"field": "temp", "type": "quantitative", "format": ".0f"},
               "color": {"value": "white"}
             }
           }
