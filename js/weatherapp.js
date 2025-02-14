@@ -1,8 +1,49 @@
 // ESTABLISH GLOBAL VARIABLES
 var apiData;
+var setLat;
+var setLong;
+
+// FORM SUBMIT: GEOCODE
+document.getElementById("geocode-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  var address = document.getElementById("address-input").value;
+  if (!address) return;
+
+  // Use Nominatim API directly
+  var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+  fetch(url)
+      .then(response => response.json())
+      .then(data => {
+          if (data.length > 0) {
+              var lat = data[0].lat;
+              var lon = data[0].lon;
+              console.log("Coordinates:", lat, lon);
+
+              // Move the map and add a marker
+              var latlng = [lat, lon];
+              leafletMap.setView(latlng, 14);
+              L.marker(latlng).addTo(leafletMap).bindPopup(data[0].display_name).openPopup();
+
+              // Display result
+              console.log(`Coordinates: ${lat}, ${lon}`);
+
+              // send Lat and Long to data retrieval
+              setLat = lat
+              setLong = lon
+              fetchWeatherData(setLat,setLong)
+
+          } else {
+              alert("Location not found!");
+          }
+      })
+      .catch(error => console.error("Geocoding error:", error));
+});
+
 
 // INITIALIZE LEAFLET MAP FOR GEOCODING
-const leafletMap = L.map('map').setView([0,0],11);
+const leafletMap = L.map('map').setView([40.654361,-73.966668],11);
 
 // Add  tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -11,25 +52,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
   maxZoom: 15,
   minZoom: 11
 }).addTo(leafletMap);
-
-const geocoder = L.Control.geocoder({
-  defaultMarkGeocode: false // Prevent automatic marker placement
-}).addTo(leafletMap);
-
-// Listen for the geocode result event
-geocoder.on('markgeocode', function (e) {
-  console.log('****GEOCODING...')
-  const latlng = e.geocode.center;
-  console.log(`Latitude: ${latlng.lat}, Longitude: ${latlng.lng}`);
-
-  // Optionally, add a marker at the selected location
-  L.marker(latlng).addTo(leafletMap)
-    .bindPopup(`Latitude: ${latlng.lat}<br>Longitude: ${latlng.lng}`)
-    .openPopup();
-
-    fetchWeatherData(latlng.lat,latlng.lng)
-
-});
 
 
 // USE BROWSER GEOCODER TO GET ZIP
@@ -45,11 +67,18 @@ function getLocation() {
 function fetchLoc(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
+    setLat = latitude
+    setLong = longitude
 
     fetchWeatherData(latitude,longitude)
 
-    leafletMap.setView([latitude,longitude], 11);
+    var latlng = [latitude, longitude];
+    leafletMap.setView(latlng, 14);
+    L.marker(latlng).addTo(leafletMap)
+      // .bindPopup(data[0].display_name)
+      // .openPopup();
 
+    leafletMap.setView([latitude,longitude], 14);
 
 }
 
@@ -74,31 +103,6 @@ function showError(error) {
 // Get the location when the page loads
 getLocation();
 
-// EVENT LISTENER ON ZIP SUBMISSION FORM
-document.addEventListener("DOMContentLoaded", function () {
-    const input = document.querySelector(".form-control");
-    const button = document.querySelector(".btn");
-
-    function handleSubmit() {
-        const value = input.value.trim();
-        console.log("Entered value:", value);
-        
-        if (/^\d{5}$/.test(value)) {
-            console.log("Valid 5-digit ZIP Code.");
-            fetchWeatherData(value)
-        } else {
-            console.log("Invalid ZIP Code. Please enter a 5-digit number.");
-        }
-    }
-
-    button.addEventListener("click", handleSubmit);
-    input.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            handleSubmit();
-        }
-    });
-});
 
 // INITIALIZE API FETCH
 function fetchWeatherData(x,y) {
@@ -106,12 +110,12 @@ function fetchWeatherData(x,y) {
   fetch (api)
       .then(response => {return response.json()})
       .then(data => {
-      apiData = data
-      console.log('***LOADING WEATHER DATA')
-      console.log(apiData)
-      printTodaySummary(apiData)
-      drawTableShells(apiData)
-      ingestHourlyData(apiData)
+        apiData = data
+        console.log('****LOADING WEATHER DATA')
+        console.log(apiData)
+        printTodaySummary(apiData)
+        drawTableShells(apiData)
+        ingestHourlyData(apiData)
   })
 }
 
@@ -125,7 +129,7 @@ function printTodaySummary(x) {
     document.getElementById('statePrint').innerText = x.location.region
 
     // Current
-    document.getElementById('currentTempPrint').innerText = x.current.temp_f
+    document.getElementById('currentTempPrint').innerText = setUnits(x.current.temp_f)
     document.getElementById('textPrint').innerText = x.current.condition.text
 
     // Icon
@@ -147,7 +151,7 @@ function printTodaySummary(x) {
 }
 
 function drawTableShells(x) {
-    console.log('***DRAWING TABLE SHELLS');
+    console.log('****DRAWING TABLE SHELLS');
 
     var holder = document.getElementById('forecastHolder');
     holder.innerHTML = ''; // Clear previous content
@@ -248,8 +252,8 @@ function printRangeHeaders(x) {
             document.getElementById(`day${i}`).innerText = getDayOfWeek(x.forecast.forecastday[i].date)
         }
         // Get daily highs and lows
-        var low = x.forecast.forecastday[i].day.mintemp_f
-        var high = x.forecast.forecastday[i].day.maxtemp_f
+        var low = setUnits(x.forecast.forecastday[i].day.mintemp_f)
+        var high = setUnits(x.forecast.forecastday[i].day.maxtemp_f)
         // And push to array
         sevenDayTemps.push(low,high)
     }
@@ -262,8 +266,8 @@ function printRangeHeaders(x) {
 
     // LOOP THROUGH DAYS, CREATE LITTLE CHART
     for (let j = 0; j < x.forecast.forecastday.length; j++) {
-        var todayLow = x.forecast.forecastday[j].day.mintemp_f
-        var todayHigh = x.forecast.forecastday[j].day.maxtemp_f
+        var todayLow = setUnits(x.forecast.forecastday[j].day.mintemp_f)
+        var todayHigh = setUnits(x.forecast.forecastday[j].day.maxtemp_f)
 
         // create data json
 
@@ -389,8 +393,8 @@ function ingestHourlyData(x) {
         var dayChanceSnow = x.forecast.forecastday[i].day.daily_chance_of_snow
         
 
-        var maxtemp = x.forecast.forecastday[i].day.maxtemp_f + 3
-        var mintemp = x.forecast.forecastday[i].day.mintemp_f - 3
+        var maxtemp = setUnits(x.forecast.forecastday[i].day.maxtemp_f + 3)
+        var mintemp = setUnits(x.forecast.forecastday[i].day.mintemp_f - 3)
 
         var precip;
 
@@ -414,7 +418,7 @@ function ingestHourlyData(x) {
             let dayObject = {
                 time: hour.time,
                 time_epoch: hour.time_epoch,
-                temp_f: hour.temp_f,
+                temp_f: setUnits(hour.temp_f),
                 cloud: hour.cloud,
                 precip_in: hour.precip_in,
                 chance_of_rain: hour.chance_of_rain,
@@ -452,6 +456,8 @@ function drawChart(day,data,precip,domain) {
 
     var mainLabel = capitalizeFirstLetter(mainPrecip)
     var secondLabel = capitalizeFirstLetter(secondPrecip)
+
+    var unitPrint = (units === 1) ? '°F' : '°C'
 
     var mainDisplay =  {
         "width": "container",
@@ -497,7 +503,7 @@ function drawChart(day,data,precip,domain) {
       var secondDisplay = {
         "width": "container",
         "height": 30,
-        "title": {"text": secondLabel, "align": "left", "dy": 10},
+        "title": {"text": secondLabel, "align": "left", "dx": -32, "dy": 10},
         "mark": {
           "type": "text",
           "align": "center",
@@ -556,7 +562,7 @@ function drawChart(day,data,precip,domain) {
                   "field": "temp_f",
                   "type": "quantitative",
                   "title": "",
-                  "axis": {"labelExpr": "datum.value + '°F'", "orient": "left"},
+                  "axis": {"labelExpr": `datum.value + '${unitPrint}'`, "orient": "left"},
                   "scale": {
                     "domain": domain
                   }
@@ -643,24 +649,40 @@ function getDayOfWeek(dateString) {
 
 }
 
-function formatHourFromEpoch(epoch) {
-    // Ensure epoch is in milliseconds
-    if (epoch < 10000000000) {
-        epoch *= 1000; // Convert seconds to milliseconds
-    }
-
-    const date = new Date(epoch);
-    let hours = date.getHours();
-    const suffix = hours >= 12 ? 'pm' : 'am';
-
-    // Convert 24-hour time to 12-hour format
-    hours = hours % 12 || 12;
-
-    return `${hours}${suffix}`;
-}
-
-
 function capitalizeFirstLetter(str) {
     if (!str) return str; // Handle empty string
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+var units = 1 // 1 = F, 0 = C
+function changeUnits(x) {
+  units = x 
+  // Remove 'active' class from all unit buttons
+  document.querySelectorAll('.unitBtn').forEach(btn => btn.classList.remove('active'));
+
+  // Add 'active' class to the clicked button
+  if (x === 0) {
+    document.getElementById('cbtn').classList.add('active');
+    console.log('****UNITS SET: Celsius')
+  } else {
+    document.getElementById('fbtn').classList.add('active');
+    console.log('****UNITS SET: Fahrenheit')
+  }
+
+  // THEN, RE-PRINT INFORMATION WITH MULTIPLICATION APPLIES
+  fetchWeatherData(setLat,setLong)
+
+}
+
+// SET UNITS RUNS ON ALL NUMERIC ASSIGNMENTS; IT'LL KEEP AS F IF F IS SELECTED AS UNITS, OR CONVERT TO C
+function setUnits(x) {
+  if (units === 1) {
+    return x
+  } else if (units === 0) {
+    let convert = 5 * (x - 32)/9
+    return convert.toFixed(1)
+  }
+}
+
+console.log('****UNITS SET: Fahrenheit')
