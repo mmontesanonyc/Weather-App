@@ -16,7 +16,7 @@ document.getElementById("geocode-form").addEventListener("submit", function(even
       console.log("Entered value:", entry);
       
       if (/^\d{5}$/.test(entry)) {
-          console.log("Valid 5-digit ZIP Code.");
+          console.log("Valid 5-digit number.");
           fetchWeatherDataByZip(entry) 
       } else {
           // Else, use Nominatim API, which doesn't handle ZIPs very well
@@ -118,26 +118,40 @@ getLocation();
 
 // INITIALIZE API FETCH
 function fetchWeatherDataByZip(zip) {
-  api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + zip + '&days=14&aqi=yes&alerts=no'
+  let api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + zip + '&days=14&aqi=yes&alerts=no';
+  
   fetch(api)
-    .then(response => {return response.json()})
+    .then(response => response.json())
     .then(data => {
-      apiData = data
-      console.log('****LOADING WEATHER DATA for ZIP Code')
-      console.log(apiData)
-      beginDataReadouts()
+      if (data.error) {
+        console.error('Error fetching weather data:', data.error.message);
+        alert('Invalid ZIP Code. Please enter a valid ZIP Code.');
+        return; // Stop execution if there's an error
+      }
 
-      var lat = apiData.location.lat
-      var lon = apiData.location.lon
-      var latlng = [lat,lon]
-      console.log(latlng)
-      leafletMap.setView(latlng,14)
+      console.log('****LOADING WEATHER DATA for ZIP Code:', zip);
+      console.log(data);
 
-      L.marker(latlng).addTo(leafletMap).bindPopup(apiData.location.name + ', ' + apiData.location.region).openPopup();
+      var lat = data.location.lat;
+      var lon = data.location.lon;
+      var latlng = [lat, lon];
 
+      console.log(latlng);
+      leafletMap.setView(latlng, 14);
+
+      L.marker(latlng)
+        .addTo(leafletMap)
+        .bindPopup(data.location.name + ', ' + data.location.region)
+        .openPopup();
+      
+      beginDataReadouts();
     })
-
+    .catch(error => {
+      console.error('Network or Fetch Error:', error);
+      alert('There was a problem fetching the weather data. Please try again.');
+    });
 }
+
 
 function fetchWeatherData(x,y) {
   api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + ',' + y + '&days=14&aqi=yes&alerts=no'
