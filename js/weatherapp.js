@@ -144,7 +144,7 @@ function fetchWeatherDataByZip(zip) {
         .bindPopup(data.location.name + ', ' + data.location.region)
         .openPopup();
       
-      beginDataReadouts();
+      beginDataReadouts(data);
     })
     .catch(error => {
       console.error('Network or Fetch Error:', error);
@@ -161,19 +161,22 @@ function fetchWeatherData(x,y) {
         apiData = data
         console.log('****LOADING WEATHER DATA for lat/long')
         console.log(apiData)
-        beginDataReadouts()
+        beginDataReadouts(data)
 
         // set map location
   })
 }
 
-function beginDataReadouts() {
-  printTodaySummary(apiData)
-  drawTableShells(apiData)
-  ingestHourlyData(apiData)
+function beginDataReadouts(x) {
+  console.log('****STARTING DATA READOUTS')
+  printTodaySummary(x)
+  drawTableShells(x)
+  ingestHourlyData(x)
 }
 
 function printTodaySummary(x) {
+  console.log('****PRINTING DAILY SUMMARY')
+
     // Show results containers
     document.querySelectorAll(".resultsContainer").forEach(element => {
         element.classList.remove("resultsContainer");
