@@ -13,14 +13,14 @@ document.getElementById("geocode-form").addEventListener("submit", function(even
 
       // Test to see if it's a ZIP Code and fetches data for ZIP Code
       const entry = address.trim();
-      console.log("Entered value:", entry);
+      console.log("- Entered value:", entry);
       
       if (/^\d{5}$/.test(entry)) {
-          console.log("Valid 5-digit number.");
+          console.log(" - Valid 5-digit number. We'll treat it as a ZIP Code");
           fetchWeatherDataByZip(entry) 
       } else {
           // Else, use Nominatim API, which doesn't handle ZIPs very well
-          console.log("Not a ZIP Code");
+          console.log("- Not a ZIP Code. We'll search your location.");
 
           var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
 
