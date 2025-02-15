@@ -8,37 +8,49 @@ document.getElementById("geocode-form").addEventListener("submit", function(even
   event.preventDefault();
 
   var address = document.getElementById("address-input").value;
+
   if (!address) return;
 
-  // Use Nominatim API directly
-  var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+      // Test to see if it's a ZIP Code and fetches data for ZIP Code
+      const entry = address.trim();
+      console.log("Entered value:", entry);
+      
+      if (/^\d{5}$/.test(entry)) {
+          console.log("Valid 5-digit ZIP Code.");
+          fetchWeatherDataByZip(entry) 
+      } else {
+          // Else, use Nominatim API, which doesn't handle ZIPs very well
+          console.log("Not a ZIP Code");
 
-  fetch(url)
-      .then(response => response.json())
-      .then(data => {
-          if (data.length > 0) {
-              var lat = data[0].lat;
-              var lon = data[0].lon;
-              console.log("Coordinates:", lat, lon);
+          var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
 
-              // Move the map and add a marker
-              var latlng = [lat, lon];
-              leafletMap.setView(latlng, 14);
-              L.marker(latlng).addTo(leafletMap).bindPopup(data[0].display_name).openPopup();
+          fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                  if (data.length > 0) {
+                      var lat = data[0].lat;
+                      var lon = data[0].lon;
+                      // console.log("Coordinates:", lat, lon);
 
-              // Display result
-              console.log(`Coordinates: ${lat}, ${lon}`);
+                      // Move the map and add a marker
+                      var latlng = [lat, lon];
+                      leafletMap.setView(latlng, 14);
+                      L.marker(latlng).addTo(leafletMap).bindPopup(data[0].display_name).openPopup();
 
-              // send Lat and Long to data retrieval
-              setLat = lat
-              setLong = lon
-              fetchWeatherData(setLat,setLong)
+                      // Display result
+                      // console.log(`Coordinates: ${lat}, ${lon}`);
 
-          } else {
-              alert("Location not found!");
-          }
-      })
-      .catch(error => console.error("Geocoding error:", error));
+                      // send Lat and Long to data retrieval
+                      setLat = lat
+                      setLong = lon
+                      fetchWeatherData(setLat,setLong)
+
+                  } else {
+                      alert("Location not found!");
+                  }
+              })
+              .catch(error => console.error("Geocoding error:", error));
+      }
 });
 
 
@@ -105,18 +117,46 @@ getLocation();
 
 
 // INITIALIZE API FETCH
+function fetchWeatherDataByZip(zip) {
+  api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + zip + '&days=14&aqi=yes&alerts=no'
+  fetch(api)
+    .then(response => {return response.json()})
+    .then(data => {
+      apiData = data
+      console.log('****LOADING WEATHER DATA for ZIP Code')
+      console.log(apiData)
+      beginDataReadouts()
+
+      var lat = apiData.location.lat
+      var lon = apiData.location.lon
+      var latlng = [lat,lon]
+      console.log(latlng)
+      leafletMap.setView(latlng,14)
+
+      L.marker(latlng).addTo(leafletMap).bindPopup(apiData.location.name + ', ' + apiData.location.region).openPopup();
+
+    })
+
+}
+
 function fetchWeatherData(x,y) {
   api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + ',' + y + '&days=14&aqi=yes&alerts=no'
   fetch (api)
       .then(response => {return response.json()})
       .then(data => {
         apiData = data
-        console.log('****LOADING WEATHER DATA')
+        console.log('****LOADING WEATHER DATA for lat/long')
         console.log(apiData)
-        printTodaySummary(apiData)
-        drawTableShells(apiData)
-        ingestHourlyData(apiData)
+        beginDataReadouts()
+
+        // set map location
   })
+}
+
+function beginDataReadouts() {
+  printTodaySummary(apiData)
+  drawTableShells(apiData)
+  ingestHourlyData(apiData)
 }
 
 function printTodaySummary(x) {
