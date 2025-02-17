@@ -35,6 +35,14 @@ document.getElementById("geocode-form").addEventListener("submit", function(even
                       // Move the map and add a marker
                       var latlng = [lat, lon];
                       leafletMap.setView(latlng, 14);
+
+                      // remove other markers
+                      leafletMap.eachLayer((layer) => {
+                        if (layer instanceof L.Marker) {
+                           layer.remove();
+                        }
+                      });
+
                       L.marker(latlng).addTo(leafletMap).bindPopup(data[0].display_name).openPopup();
 
                       // Display result
@@ -86,6 +94,15 @@ function fetchLoc(position) {
 
     var latlng = [latitude, longitude];
     leafletMap.setView(latlng, 14);
+
+    // remove other markers
+    leafletMap.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+          layer.remove();
+      }
+    });
+
+
     L.marker(latlng).addTo(leafletMap)
       // .bindPopup(data[0].display_name)
       // .openPopup();
@@ -138,6 +155,13 @@ function fetchWeatherDataByZip(zip) {
 
       console.log(latlng);
       leafletMap.setView(latlng, 14);
+
+      // remove other markers
+      leafletMap.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+            layer.remove();
+        }
+      });
 
       L.marker(latlng)
         .addTo(leafletMap)
