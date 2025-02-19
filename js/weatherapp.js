@@ -767,3 +767,25 @@ function setUnits(x) {
 }
 
 console.log('****UNITS SET: Fahrenheit')
+
+
+function changeName() {
+  var names = [
+    "Weather App",
+    "Dork Sky",
+    "Tactical Freedom Weather",
+    "Stormhub",
+    "WTHR",
+    "Wibe Check",
+    "Wetflix",
+    "Cloud Atlas",
+    "W.R.E.A.M.",
+    "Brick Forecasts",
+    "Good Weather App"
+  ]
+
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  document.getElementById('title').innerText = randomName
+
+
+}
