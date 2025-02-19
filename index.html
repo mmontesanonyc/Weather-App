@@ -42,14 +42,17 @@
             <div class="col-12 px-0">
                 <div class="row pt-3 pb-2" style="background-color:#0F0E0E;color:#FBF5F3">
                     <div class="col-7 ">
-                        <h1 class="responsive-size"><i class="fas fa-sun mr-1" aria-hidden="true"></i>Weather App</h1>
+                        <h1 class="responsive-size"><i class="fas fa-sun mr-1" aria-hidden="true"></i><span id="title">Weather App</span></h1>
                     </div>
 
-                    <div class="col">
+                    <div class="col-2 ml-auto">
+                        <button class="btn btn-sm btn-outline-secondary float-right" onclick="changeName()">Change name</button>
+
                         <div class="btn-group float-right mt-2" role="group" aria-label="Basic radio toggle button group">
-                            <button class="btn btn-sm btn-outline-primary unitBtn" id="cbtn" onclick="changeUnits(0)">°C</button>
-                            <button class="btn btn-sm btn-outline-primary active unitBtn" id="fbtn" onclick="changeUnits(1)">°F</button>
-                          </div>
+                            <button class="btn btn-sm btn-outline-primary unitBtn px-3" id="cbtn" onclick="changeUnits(0)">°C</button>
+                            <button class="btn btn-sm btn-outline-primary active unitBtn px-3" id="fbtn" onclick="changeUnits(1)">°F</button>
+                        </div>
+
                           
                     </div>
         
