@@ -178,7 +178,7 @@ function fetchWeatherDataByZip(zip) {
 
 
 function fetchWeatherData(x,y) {
-  api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + ',' + y + '&days=14&aqi=yes&alerts=no'
+  api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + x + ',' + y + '&days=7&aqi=yes&alerts=no'
   fetch (api)
       .then(response => {return response.json()})
       .then(data => {
@@ -504,7 +504,7 @@ function ingestHourlyData(x) {
                 precip_in: hour.precip_in,
                 chance_of_rain: hour.chance_of_rain,
                 chance_of_snow: hour.chance_of_snow,
-                pm2_5: hour.air_quality.pm2_5
+                // pm2_5: hour.air_quality.pm2_5
             }
 
             dayData.push(dayObject);
