@@ -135,7 +135,7 @@ getLocation();
 
 // INITIALIZE API FETCH
 function fetchWeatherDataByZip(zip) {
-  let api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + zip + '&days=14&aqi=yes&alerts=no';
+  let api = 'https://api.weatherapi.com/v1/forecast.json?key=b8ed8f57e3fa4e4ca0c140623250902&q=' + zip + '&days=5&aqi=yes&alerts=no';
   
   fetch(api)
     .then(response => response.json())
@@ -773,7 +773,8 @@ function changeName() {
   var names = [
     "Weather App",
     "Dork Sky",
-    "Tactical Freedom Weather",
+    "Tactical Weather",
+    "Freedom Weather",
     "Stormhub",
     "WTHR",
     "Wibe Check",
@@ -781,7 +782,8 @@ function changeName() {
     "Cloud Atlas",
     "W.R.E.A.M.",
     "Brick Forecasts",
-    "Good Weather App"
+    "Good Weather App",
+    "Shiny Happy Forecasts"
   ]
 
   const randomName = names[Math.floor(Math.random() * names.length)];

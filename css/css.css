@@ -12,6 +12,10 @@ h1 {
   font-size: calc(.5rem + 5vw);
 }
 
+.title-link {
+  color: white!important;
+}
+
 p {
   font-family: Averta, sans-serif !important;
   font-size: 15px;
@@ -20,7 +24,7 @@ p {
 }
 
 body {
-  background-color: #fbf5f3;
+  background-color: #fbf5f365;
 }
 
 .p-a {

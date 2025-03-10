@@ -39,113 +39,102 @@
     <body>
 
         <div class="container-fluid" >
-            <div class="col-12 sr-only">
-                <p>Weather App is a simple, well-designed weather app. </p>
-            </div>
 
-            <div class="col-12 px-0">
-                <div class="row pt-3 pb-2" style="background-color:#0F0E0E;color:#FBF5F3">
-                    <div class="col-7 ">
-                        <h1 class="responsive-size"><i class="fas fa-sun mr-1" aria-hidden="true"></i><span id="title">Weather App</span></h1>
-                    </div>
+            <div class="row px-2" style="background-color:#0F0E0E;color:#FBF5F3">
+                <div class="col-12 pt-2">
+                    <a  onclick="changeName()" class="title-link h1">
+                    <h1 class="responsive-size text-center"><i class="fas fa-sun mr-1" aria-hidden="true"></i><span id="title">Weather App</a></span></h1>
+                    <p class="sr-only">Weather App is a simple, well-designed weather app.</p>
 
-                    <div class="col-3 ml-auto">
-                        <div class="row">
-                            <div class="col">
-                                <button class="btn btn-sm btn-outline-secondary float-right d-block" onclick="changeName()">Change name</button><br>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="btn-group float-right mt-2" role="group" aria-label="Basic radio toggle button group">
-                                    <button class="btn btn-sm btn-outline-primary unitBtn px-3" id="cbtn" onclick="changeUnits(0)">°C</button>
-                                    <button class="btn btn-sm btn-outline-primary active unitBtn px-3" id="fbtn" onclick="changeUnits(1)">°F</button>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                          
-                    </div>
-        
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-md-8 mx-auto">
-                        <form id="geocode-form" class="form-inline d-block">
-                            <div class="input-group">
-                                <input type="text" id="address-input" class="form-control" placeholder="Enter location">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-md-8 mx-auto col-sm-12">
-                        <div id="map" class="border" style="width:100%; height: 300px;">map</div>
-                            <!-- TODAY'S SUMMARY -->
-                            <div class="row resultsContainer hide text-center mt-4">
-                                <div class="col">
-                                    <span class="locPrint">
-                                        <span id='cityPrint'>CITY</span><span>,</span> 
-                                        <span id='statePrint'>ST</span>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="row text-center resultsContainer hide mb-4">
-                                <div class="col">
-                                <div class="d-inline-flex align-items-center justify-content-center">
-                                    <img id="iconPrint2" style="height: 6rem; margin: 0 5px;">
-                                    <span class="fs-lg">
-                                    <span id="currentTempPrint">XX</span>°
-                                    </span>
-                                </div>
-                                <div class="d-block mt-0">
-                                    <span id="textPrint" class="summary-info d-block p-1 mx-1">
-                                        <!-- condition -->
-                                    </span> 
-                                    <span class="summary-info border p-1 mx-1">
-                                        <i class="fas fa-cloud-showers-heavy mr-1"></i>
-                                        <span id="rainChancePrint" class="font-weight-bold">XX</span>
-                                    </span>
-                                    <span class="summary-info border p-1 mx-1">
-                                        <i class="fas fa-snowflake mr-1"></i>
-                                        <span id="snowChancePrint"  class="font-weight-bold">XX</span>
-                                    </span>
-                                    <span class="summary-info border p-1 mx-1">
-                                        AQI: <span id='aqiPrint' class="ml-1 font-weight-bold">Z</span>
-                                    </span>
-
-
-                                </div>
-                                </div>
-                            </div>
-                            
-                        
-                            <!-- FORECAST ACCORDIONS -->
-                            <div class="row resultsContainer hide" id="forecastHolder">
-
-                            </div>
-                    </div>
-                </div>
-
-
-
-                <div class="row">
-                    <div class="col-md-8 mx-auto col-sm-12">
-                        <hr>
-                        <p>Powered by <a href="https://www.weatherapi.com">WeatherAPI</a>. If you like Weather App, or if you'd like to see more days of forecast, feel free to <a href="https://venmo.com/code?user_id=2293559168335872144&created=1739136186">Venmo me a few bucks</a> to fund API subscription.</p>
-                    </div>
                 </div>
             </div>
 
-
-
-
+            <div class="row">
+                <div class="col-12 px-2">
     
+                    <div class="row mt-4">
+                        <div class="col-md-8 mx-auto">
+                            <form id="geocode-form" class="form-inline d-block">
+                                <div class="input-group">
+                                    <input type="text" id="address-input" class="form-control" placeholder="Enter location">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-8 mx-auto col-sm-12">
+                            <div id="map" class="border" style="width:100%; height: 300px;">map</div>
+
+                            <div class="row">
+                                <div class="col ml-auto">
+                                    <div class="btn-group d-inline-block float-right mt-1" role="group" aria-label="Radio buttons to toggle units">
+                                        <button class="btn btn-sm btn-outline-primary unitBtn px-3 mr-0" id="cbtn" onclick="changeUnits(0)">°C</button>
+                                        <button class="btn btn-sm btn-outline-primary active unitBtn px-3 ml-0" id="fbtn" onclick="changeUnits(1)">°F</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                                <!-- TODAY'S SUMMARY -->
+                                <div class="row resultsContainer hide text-center mt-4">
+                                    <div class="col">
+                                        <span class="locPrint">
+                                            <span id='cityPrint'>CITY</span><span>,</span> 
+                                            <span id='statePrint'>ST</span>
+                                        </span>
+                                    </div>
+                                </div>
+    
+                                <div class="row text-center resultsContainer hide mb-4">
+                                    <div class="col">
+                                    <div class="d-inline-flex align-items-center justify-content-center">
+                                        <img id="iconPrint2" style="height: 6rem; margin: 0 5px;">
+                                        <span class="fs-lg">
+                                        <span id="currentTempPrint">XX</span>°
+                                        </span>
+                                    </div>
+                                    <div class="d-block mt-0">
+                                        <span id="textPrint" class="summary-info d-block p-1 mx-1">
+                                            <!-- condition -->
+                                        </span> 
+                                        <span class="summary-info border p-1 mx-1">
+                                            <i class="fas fa-cloud-showers-heavy mr-1"></i>
+                                            <span id="rainChancePrint" class="font-weight-bold">XX</span>
+                                        </span>
+                                        <span class="summary-info border p-1 mx-1">
+                                            <i class="fas fa-snowflake mr-1"></i>
+                                            <span id="snowChancePrint"  class="font-weight-bold">XX</span>
+                                        </span>
+                                        <span class="summary-info border p-1 mx-1">
+                                            AQI: <span id='aqiPrint' class="ml-1 font-weight-bold">Z</span>
+                                        </span>
+    
+    
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                            
+                                <!-- FORECAST ACCORDIONS -->
+                                <div class="row resultsContainer hide" id="forecastHolder">
+    
+                                </div>
+                        </div>
+                    </div>
+    
+    
+    
+                    <div class="row">
+                        <div class="col-md-8 mx-auto col-sm-12">
+                            <hr>
+                            <p>Powered by <a href="https://www.weatherapi.com">WeatherAPI</a>. If you like Weather App, or if you'd like to see more days of forecast, feel free to <a href="https://venmo.com/code?user_id=2293559168335872144&created=1739136186">Venmo me a few bucks</a> to fund API subscription.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
 
     </div>
 
