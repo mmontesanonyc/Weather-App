@@ -261,32 +261,30 @@ function drawTableShells(x) {
 
         let collapseHTML = `
             <!-- DAY ${i} COLLAPSE -->
-            <div class="row no-gutters dayContent sr-only mb-4" id="${collapseId}">
-            <div class="col-3 pl-1">
+            <div class="col-12 dayContent sr-only mb-4" id="${collapseId}">
+            <div class="row py-2 fs-sm">
+              <div class="col-9">
+                <div class="border text-center d-inline-block px-2">
+                  <i class="fas fa-cloud-showers-heavy"></i><span id="day${i}rain" class="fw-bold">XX%</span>%
+                </div>
+                <div class="border text-center d-inline-block px-2">
+                  <i class="fas fa-snowflake"></i><span id="day${i}snow" class="fw-bold">YY%</span>%
+                </div>
+                <div class="border text-center d-inline-block px-2">
+                  <i class="fas fa-ruler"></i><span id="day${i}precip" class="fw-bold">ZZ</span>"
+                </div>
+              </div>
 
-                    <div class="border-bottom fs-sm d-block mb-1">
-                      <i class="fas fa-temperature-high"></i>Temp range
-                    </div>
-
-                    <div class="fs-sm">
-                      <span id="day${i}low" class="fw-bold">XX°</span> - <span id="day${i}high" class="fw-bold">YY°</span>    
-                    </div>
-
-                    <div class="mt-4 fs-sm border-bottom d-block mb-1">
-                      <i class="fas fa-ruler"></i>Precip: <span id="day${i}precip" class="fw-bold">ZZ"</span>
-                    </div>
-
-                    <div class="d-block my-2 fs-sm">
-                      <i class="fas fa-cloud-showers-heavy"></i><span id="day${i}rain" class="fw-bold">XX%</span><br>
-                      <i class="fas fa-snowflake"></i><span id="day${i}snow" class="fw-bold">YY%</span>
-                    </div>
-
-                    <div class="mt-4 fs-sm border-bottom d-block mb-1">
-                      <i class="fas fa-smog"></i>AQI: <span id="day${i}aqi" class="fw-bold">1</span>
-                    </div>
+              <div class="col-3">
+                <div class="border text-center d-inline-block px-2 float-end">
+                  <i class="fas fa-smog"></i>AQI: <span id="day${i}aqi" class="fw-bold">1</span>
+                </div>
+              </div>
+            
             </div>
 
-              <div class="col-9">
+
+              <div class="col-12">
                     <div class="vis-container">
                         <div class="vis pr-2" id="day${i}vis">Vis goes here</div>
                     </div>
@@ -358,8 +356,6 @@ function printRangeHeaders(x) {
         }
 
         // Print day drop-down infos
-        document.getElementById(`day${i}low`).innerHTML = x.forecast.forecastday[i].day.mintemp_f
-        document.getElementById(`day${i}high`).innerHTML = x.forecast.forecastday[i].day.maxtemp_f
         document.getElementById(`day${i}precip`).innerHTML = x.forecast.forecastday[i].day.totalprecip_in
         document.getElementById(`day${i}rain`).innerHTML = x.forecast.forecastday[i].day.daily_chance_of_rain
         document.getElementById(`day${i}snow`).innerHTML = x.forecast.forecastday[i].day.daily_chance_of_snow
