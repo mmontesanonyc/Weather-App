@@ -248,7 +248,7 @@ function drawTableShells(x) {
                     <div class="col-3">
                         <span class="d-block"> 
                             <img src="sampleimage.png" id="day${i}Icon" alt="icon" style="width: 30px; height: 30px; vertical-align: middle;">
-                            <span class="font-weight-bold" id="day${i}">Today</span>
+                            <span class="fw-bold" id="day${i}">Today</span>
                         </span>
                         <p class="fs-xs" id="day${i}Condition">Condition</p>
                     </div>
@@ -261,10 +261,34 @@ function drawTableShells(x) {
 
         let collapseHTML = `
             <!-- DAY ${i} COLLAPSE -->
-            <div class="col-12 px-2">
-                <div class="dayContent sr-only mb-4" id="${collapseId}">
+            <div class="row no-gutters dayContent sr-only mb-4" id="${collapseId}">
+            <div class="col-3 pl-1">
+
+                    <div class="border-bottom fs-sm d-block mb-1">
+                      <i class="fas fa-temperature-high"></i>Temp range
+                    </div>
+
+                    <div class="fs-sm">
+                      <span id="day${i}low" class="fw-bold">XX°</span> - <span id="day${i}high" class="fw-bold">YY°</span>    
+                    </div>
+
+                    <div class="mt-4 fs-sm border-bottom d-block mb-1">
+                      <i class="fas fa-ruler"></i>Precip: <span id="day${i}precip" class="fw-bold">ZZ"</span>
+                    </div>
+
+                    <div class="d-block my-2 fs-sm">
+                      <i class="fas fa-cloud-showers-heavy"></i><span id="day${i}rain" class="fw-bold">XX%</span><br>
+                      <i class="fas fa-snowflake"></i><span id="day${i}snow" class="fw-bold">YY%</span>
+                    </div>
+
+                    <div class="mt-4 fs-sm border-bottom d-block mb-1">
+                      <i class="fas fa-smog"></i>AQI: <span id="day${i}aqi" class="fw-bold">1</span>
+                    </div>
+            </div>
+
+              <div class="col-9">
                     <div class="vis-container">
-                        <div class="vis pr-3" id="day${i}vis">Vis goes here</div>
+                        <div class="vis pr-2" id="day${i}vis">Vis goes here</div>
                     </div>
                 </div>
             </div>
@@ -332,6 +356,15 @@ function printRangeHeaders(x) {
         if ( i > 0) {
             document.getElementById(`day${i}`).innerText = getDayOfWeek(x.forecast.forecastday[i].date)
         }
+
+        // Print day drop-down infos
+        document.getElementById(`day${i}low`).innerHTML = x.forecast.forecastday[i].day.mintemp_f
+        document.getElementById(`day${i}high`).innerHTML = x.forecast.forecastday[i].day.maxtemp_f
+        document.getElementById(`day${i}precip`).innerHTML = x.forecast.forecastday[i].day.totalprecip_in
+        document.getElementById(`day${i}rain`).innerHTML = x.forecast.forecastday[i].day.daily_chance_of_rain
+        document.getElementById(`day${i}snow`).innerHTML = x.forecast.forecastday[i].day.daily_chance_of_snow
+        document.getElementById(`day${i}aqi`).innerHTML = x.forecast.forecastday[i].day.air_quality["us-epa-index"]
+
         // Get daily highs and lows
         var low = setUnits(x.forecast.forecastday[i].day.mintemp_f)
         var high = setUnits(x.forecast.forecastday[i].day.maxtemp_f)
@@ -396,6 +429,12 @@ function drawDayRangeChart(day,data,range) {
         "data": {
           "values": data
         },
+        "transform": [
+          {
+            "calculate": "format(datum.temp, '.0f') + '°'",
+            "as": "tempLabel"
+          }
+        ],
         "encoding": {
           "x": {
             "field": "temp",
@@ -451,7 +490,7 @@ function drawDayRangeChart(day,data,range) {
             },
             "encoding": {
               "x": {"field": "temp", "type": "quantitative"},
-              "text": {"field": "temp", "type": "quantitative", "format": ".0f"},
+              "text": {"field": "tempLabel"},
               "color": {"value": "white"}
             }
           }
@@ -555,7 +594,7 @@ function drawChart(day,data,precip,domain) {
             "gradient": "linear",
             "stops": [
               {"offset": 0, "color": "white"},
-              {"offset": 1, "color": "lightblue"}
+              {"offset": 1, "color": "blue"}
             ]
           }
         },
@@ -618,8 +657,8 @@ function drawChart(day,data,precip,domain) {
         },
         "config": {
           "title": {"anchor": "start", "fontSize": 10},
-          "axisY": {"tickCount": 3, "domain": false, "tickColor": "lightgray"},
-          "axisX": {"grid": false, "tickCount": 4, "domain": true},
+          "axisY": {"tickCount": 2, "domain": false, "tickColor": "lightgray","labelColor": "darkgray"},
+          "axisX": {"grid": false, "tickCount": 4, "domain": true,"labelColor": "darkgray"},
           "view": {"stroke": null},
           "background": "transparent"
         },
@@ -627,7 +666,7 @@ function drawChart(day,data,precip,domain) {
             {
               "width": "container",
               "height": 90,
-              "title": {"text": "Temperature", "align": "left"},
+              "title": {"text": "Temp", "align": "left"},
               "mark": {"type": "point", "size": 150, "filled": true},
               "encoding": {
                 "x": {
@@ -648,7 +687,7 @@ function drawChart(day,data,precip,domain) {
                     "domain": domain
                   }
                 },
-                "color": {"value": "coral"}
+                "color": {"value": "maroon"}
               }
             },
             mainDisplay,
@@ -771,6 +810,7 @@ console.log('****UNITS SET: Fahrenheit')
 
 function changeName() {
   var names = [
+    "Nice Weather",
     "Weather App",
     "Dork Sky",
     "Tactical Weather",

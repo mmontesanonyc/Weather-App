@@ -14,6 +14,7 @@ h1 {
 
 .title-link {
   color: white!important;
+  text-decoration: none!important;
 }
 
 p {
@@ -262,7 +263,7 @@ thead {
 
 .fs-xs {
   font-size: 10px;
-  line-height: 90%;
+  line-height: 100%;
   white-space: nowrap;
 }
 
@@ -304,4 +305,23 @@ thead {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.no-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: inherit!important;
+
+}
+
+.no-bullets li {
+  padding: 0;
+  margin: 0;
+  font-size: inherit!important;
+
+}
+
+i {
+  margin-right: 5px;
 }
